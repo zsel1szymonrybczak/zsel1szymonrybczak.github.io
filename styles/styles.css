@@ -1,0 +1,81 @@
+#container {
+    width: 100%;
+}
+
+#class-name {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 900;
+}
+
+#header {
+    display: flex;
+    justify-content: space-between;
+}
+
+#footer {
+    display: flex;
+}
+
+#date {
+    color: gray;
+    padding-left: 8px;
+}
+
+#three-lesson-container {
+    width: 600px;
+    text-align: center;
+}
+
+#lesson-number-container {
+    text-align: center
+}
+
+#lesson-number {
+    font-weight: bold;
+    font-size: 40px;
+}
+
+#day-cell {
+    width: 150px;
+    text-align: center;
+}
+
+#day {
+    font-size: 40px;
+    font-weight: 400;
+}
+
+#lesson-name {
+    font-weight: bold;
+    font-size: 30px;
+    height: 30%;
+}
+
+#group-number {
+    text-align: end;
+    padding: 15px;
+    color: white;
+}
+
+#lesson-cell {
+    text-align: center;
+}
+
+#lesson-info-container {
+    width: 100%;
+}
+
+#classroom-number {
+    padding: 15px;
+}
+
+#teacher-first-letters {
+    text-align: end;
+    padding: 15px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%
+}
