@@ -1,0 +1,34 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+function SetPass(){
+with(pass_set){
+sNew=new_pass.value;
+if(sNew.length==0)return errInput(new_pass,MPassword101);
+if(sNew!=renew_pass.value)return errInput(new_pass,MPassword102);
+submitForm(pass_set,"changing_pw.cgi");
+}
+}
+</script>
+</head>
+<body>
+<form name=pass_set>
+<script>
+genHdWksp(Password0100,176);
+showFieldset("diFS",Password0100,40,116);
+showTable('tabContent','tabContent');
+showTRTD(Password0102,180);
+showTD(strPassword('old_pass','flatL',20));
+showTRTD(Password0103);
+showTD(strPassword('new_pass','flatL',20));
+showTRTD(Password0104);
+showTD(strPassword('renew_pass','flatL',20));
+showTD(strButton('',BT0104,'btnText','SetPass();'),'','right','',6);
+docW("</table></form>");
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+</body>
+</html>

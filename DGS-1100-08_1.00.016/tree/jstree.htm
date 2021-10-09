@@ -1,0 +1,88 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<style>
+<!--
+body{position:relative;z-index:0;background:rgb(209,211,212);font-size:12px;font-family:Arial;}
+.treeConfig{position:absolute;top:4;left:4;width:234;height:800;}
+.transparentEvents{background-color:white;filter:alpha(opacity=40);opacity:0.4;-moz-opacity:0.4;}
+.dDialogCover{position:absolute;overflow:hidden;top:0px;left:0px;width:258;z-index:10010;-moz-user-focus:ignore;}
+.themenubar{position:absolute;top:0;visibility:hidden;z-index:3;background:rgb(255,255,255);
+border:solid;border-width:1;border-color:rgb(19,99,147);cursor:pointer;}
+.tabMenuBack{position:absolute;top:2;left:2;z-index:-2;width:236;height:780;background:rgb(255,255,255);border:solid;border-width:2;
+border-right-color:rgb(255,255,255);border-bottom-color:rgb(255,255,255);
+border-left-color:rgb(126,128,128);border-top-color:rgb(126,128,128);}
+-->
+</style>
+<script>
+var tTry=0;
+function frozen(){showObj('frozen_div_t');}
+function unfrozen(){hideObj('frozen_div_t');}
+function hiddenAllMenu(){
+hideObj('tag1');
+hideObj('tag2');
+with(p.mf0){hideObj("menuHelp");}
+}
+function showMenu1(){
+showObj('tag1');
+hideObj('tag2');
+with(p.mf0){hideObj("menuHelp");}
+}
+function showMenu2(){
+showObj('tag2');
+hideObj('tag1');
+with(p.mf0){hideObj("menuHelp");}
+}
+function showMenu3(){
+with(p.mf0){
+if(Defined(d.body)&&d.body!=null&&Defined(d.body.scrollLeft)){
+showObj("menuHelp");
+setLeft("menuHelp",d.body.scrollLeft);
+}
+}
+hideObj('tag1');
+hideObj('tag2');
+}
+function sselItemMark(objName){treeConfig.selItemMark(objName);}
+function resize(){
+wsh=getWindowAvailHeight();
+wsw=getWindowAvailWidth();
+if(wsw==0||wsh==0){
+tTry++;
+if(tTry<10)
+window.setTimeout("resize();","100");
+return;
+}
+tTry=0;
+fwsh=wsh-4;
+fwsw=wsw/260;
+moveObj('treeConfig','','',fwsh-4,252*fwsw);
+moveObj('tabMenuBack','','',fwsh,256*fwsw);
+moveObj('frozen_div_t','','',wsh,wsw);
+}
+</script>
+</head>
+<body bgcolor="#CCDCE2"onresize="resize();"onload="resize();">
+<div id=frozen_div_t class="dDialogCover transparentEvents"style="visibility:hidden;scrolling:no"></div>
+<script>
+docW("<iframe name=treeConfig id=treeConfig class=treeConfig src='"+TRD+"treeiframe.htm' frameborder='0' scrolling='auto'onMouseOver='hiddenAllMenu();'></iframe>");
+strTmp1="<tr><td onmouseover=\"this.style.backgroundColor='#136393';this.style.color='#FFFFFF';showMenu";
+strTmp2=" onmouseout=\"this.style.backgroundColor=this.style.color;this.style.color='#000000';\""+
+" onMouseUp=\"hiddenAllMenu();p.mf0.location.href='";
+showTable('tag1','themenubar',',50',0,'',195,'',"onMouseOver='showMenu1();'")
+strTmp=strTmp1+"1();\""+strTmp2;
+docW(strTmp+HTML0104+"';\">&nbsp;"+Reboot0100);
+docW(strTmp+HTML0101+"';\">&nbsp;"+Reset0100);
+docW(strTmp+HTML0103+"';\">&nbsp;"+Upgrade0108);
+docW(strTmp+HTML0102+"';\">&nbsp;"+Backup0100);
+docW("</table>");
+showTable('tag2','themenubar',',22',0,'',150,'',"onMouseOver='showMenu2();'")
+strTmp=strTmp1+"2();\""+strTmp2;
+docW(strTmp+HTML0105+"';\">&nbsp;"+Save0100);
+</script>
+</table>
+<table id=tabMenuBack class=tabMenuBack>
+<tr><td>&nbsp;</td></tr>
+</table>
+</body>
+</html>

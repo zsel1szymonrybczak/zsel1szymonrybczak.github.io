@@ -1,0 +1,105 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'IPv4.js');
+function chkIPEnable(){
+with(sys_ip){
+for(i=0;i<4;i++)ip[i].disabled=mk[i].disabled=gw[i].disabled=DHCP[1].checked;
+tms.disabled=DHCP[0].checked;
+}
+}
+function CheckMaskValid(iMask){
+while(iMask){
+if((iMask&0x80000000)==0)return false;
+iMask=(iMask<<1)&0xFFFFFFFF;
+}
+return true;
+}
+function ip_apply(){
+with(sys_ip_set){
+var nIP=0,nMask=0,nGwIP=0;
+var f=d.sys_ip;
+dhcp.value=f.DHCP[0].checked?0:1;
+if(dhcp.value==0){
+var StaticIP=new Array(),GatewayIP=new Array(),IPMsk=new Array();
+for(var i=0;i<4;i++){
+StaticIP[i]=f.ip[i].value;
+GatewayIP[i]=f.gw[i].value;
+IPMsk[i]=f.mk[i].value;
+if(isNaN(StaticIP[i]))return errInput(f.ip[i],MSystem100);
+if(isNaN(IPMsk[i]))return errInput(f.mk[i],MSystem101);
+if(isNaN(GatewayIP[i]))return errInput(f.gw[i],MSystem102);
+nIP<<=8;nIP|=parseInt(StaticIP[i],10);
+nGwIP<<=8;nGwIP|=parseInt(GatewayIP[i],10);
+nMask<<=8;nMask|=parseInt(IPMsk[i],10);
+}
+if(!CheckMaskValid(nMask))return errInput(f.mk[0],MSystem101);
+if(CheckIPValid(StaticIP)==1||(nIP&(~nMask))==(~nMask)||(nIP&(~nMask))==0)
+return errInput(f.ip[0],MSystem100);
+if(nGwIP){
+if(CheckIPValid(GatewayIP)==1)return errInput(f.gw[0],MSystem102);
+if((nIP&nMask)!=(nGwIP&nMask))return errInput(f.ip[0],MSystem104);
+}
+if(nIP==nGwIP)return errInput(f.gw[3],MSystem105);
+ip.value=StaticIP.join('.');
+submask.value=IPMsk.join('.');
+gateway.value=GatewayIP.join('.');
+}
+else{
+if(!checkIntegerInput(f.tms,g_MinDHCPRetryTimes,g_MaxDHCPRetryTimes))return;
+dhcptm.value=f.tms.value;
+}
+if(dhcp.value==1||dho!=dhcp.value||ipo!=nIP||ipom!=nMask||ipog!=nGwIP)
+if(confirm(MSystem109))
+submitForm(sys_ip_set,"set_ip.cgi");
+}
+}
+</script>
+</head>
+<body>
+<form name=sys_ip_set>
+<script>
+genHdWksp(Tree01102,256);
+showFieldset("diFS",System0101,40,200);
+hideInput('dhcp');
+hideInput('ip','');
+hideInput('submask','');
+hideInput('gateway','');
+hideInput('dhcptm','');
+docW("</form><form name=sys_ip>");
+showTable('tbIPSet','tabContent');
+showTRTD('',0);
+showTD(g_Sp1+strRadioEnable('DHCP',ds_IPInfo[0]==0,'chkIPEnable();',VSystem100+g_Sp6,VSystem101));
+showLine();
+showTable();
+showNulLn(1);
+var x,aIP=[[Pub0136,'ip'],[System0103,'mk'],[System0104,'gw']];
+for(x=0;x<3;x++)
+{
+showTRTD(g_Sp6+aIP[x][0],192);
+showTD(g_Sp1+strShowIP('sys_ip',aIP[x][1],ds_IPInfo[x+1]));
+}
+showNulLn(1);
+showTRTD(g_Sp6+System0111+g_Sp1+g_Lbkt+g_MinDHCPRetryTimes+g_WavL+g_MaxDHCPRetryTimes+g_Rbkt);
+showTD(g_Sp1+strText("tms","flat",3,ds_IPInfo[4])+g_Sp1+System0112);
+docW('</table></table>');
+showTable('tabIPApply','tabContent',200);
+showTRTD(g_Sp2+Pub0113+System0110);
+showTD(strButton('',BT0104,"btnText","ip_apply();"),'','right','',9);
+docW('</table></form>');
+dho=ds_IPInfo[0];
+ipo=0,ipom=0,ipog=0;
+for(i=0;i<4;i++){
+ipo<<=8;ipo|=parseInt(splitIP(ds_IPInfo[1],i));
+ipom<<=8;ipom|=parseInt(splitIP(ds_IPInfo[2],i));
+ipog<<=8;ipog|=parseInt(splitIP(ds_IPInfo[3],i));
+}
+chkIPEnable();
+recRSItem('diFS',20);
+recRSItem('tbIPSet',25);
+recRSItem('tabIPApply',40);
+resizeWS();
+</script>
+</body>
+</html>

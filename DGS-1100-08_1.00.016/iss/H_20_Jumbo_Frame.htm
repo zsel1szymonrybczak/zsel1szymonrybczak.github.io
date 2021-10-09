@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'Jumbo.js');
+</script>
+<head>
+<body>
+<form name=Jumbo>
+<script>
+genHdWksp(Jumbo0100,146);
+showFieldset("diFS",Jumbo0100,40,90);
+showTable('tabContent','tabContent');
+showTRTD(Jumbo0100,'25%');
+showTD(strRadioEnable('JumboEn',ds_JumboEn));
+showTD(strButton('',BT0104,'btnText','submitForm(Jumbo, "JumboState.cgi");'),'','right');
+showNulLn(5);
+showLine('',Pub0113+Jumbo0102+g_MaxFrame+Jumbo0103);
+docW("</table></form>");
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+<body>
+</html>

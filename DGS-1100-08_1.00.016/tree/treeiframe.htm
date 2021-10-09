@@ -1,0 +1,44 @@
+<html>
+<head>
+<script>document.write(parent.parent.Prefix);</script>
+<script>
+jsInclude(2,"jscooktree.js");
+jsInclude(2,"theme.js");
+jsInclude(2,"treeitems.js");
+var n=0,s=new Array();
+function getObjPN(objid){return getObj(objid).parentNode;}
+function selItemMark(objName){
+n=0;s[3]=s[2]=s[1]=s[0]=0;
+calItemPath(objName,TREE_ITEMS,0);
+i=0;
+do{
+if(!ctIsFolderOpen(getObjPN('ctItemID'+s[i])))
+ctItemClick(getObjPN('ctItemID'+s[i]));
+i++;
+}while(i<s.length&&s[i]!=0)
+}
+function calItemPath(objName,subTree,lv){
+var i=0,iLen=subTree.length;
+if(g_bIsIE)iLen--;
+if(lv)s[lv-1]=n++;
+if(lv==0||iLen>5){
+if(lv>0)i=5;
+for(;i<iLen;i++)
+if(calItemPath(objName,subTree[i],lv+1))return true;
+}
+else
+if(subTree[1]==objName)return true;
+return false;
+}
+</script>
+</head>
+<body bgcolor="#ffffff">
+<table id="ThemeXPTable"class='ThemeXPTable'STYLE='position:absolute;top:0;left:4;'>
+<tr><td id='tree_items'>
+<script>
+ctDraw('tree_items',TREE_ITEMS,ctThemeXP1,'ThemeXP',0,0);
+selItemMark(TREE_ITEMS[0][1]);
+</script>
+</table>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'Sys.js');
+function sys_apply(){
+with(sys_set){
+if(checkStringInput(sys,MSystem107)&&
+checkStringInput(loc,MSystem108)&&
+checkIntegerInput(SysTimeout,g_MinTmOut,g_MaxTmOut))
+submitForm(sys_set,"set_sys.cgi");
+}
+}
+</script>
+</head>
+<body>
+<form name=sys_set>
+<script>
+genHdWksp(System0100,196);
+showFieldset("diFS",System0105,40,140);
+showTable('tbSysSet','tabContent');
+showTRTD(Device0103,220);
+showTD(strText("sys","flatL",32,ds_SysInfo[0]));
+showTRTD(Device0105);
+showTD(strText("loc","flatL",32,ds_SysInfo[1]));
+showTRTD(Device0112);
+showTD(strText("con","flatL",32,ds_SysInfo[2]));
+showTRTD(Device0114+g_Sp1+g_Lbkt+g_MinTmOut+g_WavL+g_MaxTmOut+g_Rbkt);
+showTD(strText("SysTimeout","flatL",5,ds_SysInfo[3])+Pub0130);
+showTD(strButton('',BT0104,"btnText","sys_apply();"),'','right','',9);
+docW('</table></form>');
+recRSItem('diFS',20,1);
+recRSItem('tbSysSet',40);
+resizeWS();
+</script>
+</body>
+</html>
