@@ -1,0 +1,96 @@
+<html>
+
+<head>
+	<script>RT = '/DGS-1100-08_1.00.016/';</script>
+
+	<script>
+		if (typeof (RT) == 'undefined') {
+			RT = location.href;
+			RT = RT.substring(0, RT.lastIndexOf('/') + 1);
+		}
+		Prefix = "<script src='" + RT + "Prefix.js'></";
+		Prefix += "script>";
+		document.write(Prefix);
+	</script>
+	<script src="/DGS-1100-08_1.00.016/Prefix.js"></script>
+	<style type="text/css">
+		.user {
+			width: 24px;
+			height: 24px;
+			background-image: url(/DGS-1100-08_1.00.016/Icon/icon.gif);
+			background-position: -0px -0px;
+		}
+
+		.alert {
+			width: 20px;
+			height: 20px;
+			background-image: url(/DGS-1100-08_1.00.016/Icon/icon.gif);
+			background-position: -25px -0px;
+		}
+
+		.save {
+			width: 16px;
+			height: 16px;
+			background-image: url(/DGS-1100-08_1.00.016/Icon/icon.gif);
+			background-position: -46px -0px;
+		}
+
+		.tool {
+			width: 16px;
+			height: 16px;
+			background-image: url(/DGS-1100-08_1.00.016/Icon/icon.gif);
+			background-position: -63px -0px;
+		}
+
+		.logout {
+			width: 16px;
+			height: 16px;
+			background-image: url(/DGS-1100-08_1.00.016/Icon/icon.gif);
+			background-position: -80px -0px;
+		}
+
+		.help {
+			width: 16px;
+			height: 16px;
+			background-image: url(/DGS-1100-08_1.00.016/Icon/icon.gif);
+			background-position: -97px -0px;
+		}
+
+		.divide {
+			width: 2px;
+			height: 16px;
+			background-image: url(/DGS-1100-08_1.00.016/Icon/icon.gif);
+			background-position: -114px -0px;
+		}
+
+		.triangle {
+			width: 7px;
+			height: 4px;
+			background-image: url(/DGS-1100-08_1.00.016/Icon/icon.gif);
+			background-position: -25px -20px;
+		}
+	</style>
+	<script type="text/javascript" src="/DGS-1100-08_1.00.016/en.js"></script>
+	<script type="text/javascript" src="/DGS-1100-08_1.00.016/DS/const.js"></script>
+	<script type="text/javascript" src="/DGS-1100-08_1.00.016/form.js"></script>
+	<link rel="stylesheet" type="text/css" href="/DGS-1100-08_1.00.016/main.css">
+	<script type="text/javascript" src="/DGS-1100-08_1.00.016/login.js"></script>
+	<style>
+		<!--.tabLogTit{position:absolute;width:334;height:270;background:rgb(228,234,235);border:solid;border-width:1;border-color:rgb(19,99,147);}.imgLogTit{position:absolute;top:-1;left:0;z-index:0;width:334;height:30;border:none;}.imgLogTitKey{position:absolute;top:29;left:0;z-index:0;width:334;height:50;border:none;}.tabLogCont{position:absolute;width:280;border:none;}.tdTitle{position:absolute;z-index:1;font-size:18px;height:30;color:black;}
+		-->
+	</style>
+	<script>
+		docW("<title>" + g_SwitchInfo[0] + "</title>");
+		tFS = '<frameset border=0 framespacing=0 frameborder=no ';
+		docW(tFS + "rows='120,*'>");
+		docW("<frame name=topPic src='" + RD + "top.htm' scrolling=no>");
+		docW(tFS + "cols='266,*'>");
+		docW("<frame name=leftMenu src='" + TRD + "jstree.htm' noresize scrolling=no>");
+		docW("<frame name=mf0 id=mf0 src='" + ISD + "H_00_DeviceInfo.htm' noresize scrolling=auto>");
+	</script>
+	<title>DGS-1100-08</title>
+</head>
+<frameset border="0" framespacing="0" frameborder="no" rows="120,*"><frame name="topPic" src="/DGS-1100-08_1.00.016/top.htm" scrolling="no"><frameset border="0" framespacing="0" frameborder="no" cols="266,*"><frame name="leftMenu" src="/DGS-1100-08_1.00.016/tree/jstree.htm" noresize="" scrolling="no"><frame name="mf0" id="mf0" src="/DGS-1100-08_1.00.016/iss/H_00_DeviceInfo.htm" noresize="" scrolling="auto">
+</frameset>
+</frameset>
+</html>

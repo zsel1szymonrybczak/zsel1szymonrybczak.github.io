@@ -1,0 +1,112 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'admin.js');
+var tTry=0;
+function chgBorder(obj){obj.className="tabTool2";}
+function bckBorder(obj){obj.className="tabTool";}
+function Continue(){
+if(confirm(Logout0101))
+submitForm(topForm,"logout.cgi");
+}
+function hideMenuTip(){
+if(p&&Defined(p.leftMenu)&&Defined(p.leftMenu.hiddenAllMenu))
+p.leftMenu.hiddenAllMenu();
+if(p&&Defined(p.mf0))
+with(p.mf0){hideObj("tabLogout");}
+}
+function showLogoutTip(){
+if(p&&Defined(p.mf0))
+with(p.mf0){showLogoutTag();}
+}
+function showMenu(id){
+if(p&&Defined(p.leftMenu))
+{
+if(id==1&&Defined(p.leftMenu.showMenu1))
+p.leftMenu.showMenu1();
+if(id==2&&Defined(p.leftMenu.showMenu2))
+p.leftMenu.showMenu2();
+if(id==3&&Defined(p.leftMenu.showMenu3))
+p.leftMenu.showMenu3();
+}
+}
+function resizeTop(){
+var	wsh=getWindowAvailHeight(),
+wsw=getWindowAvailWidth();
+if(wsw==0||wsh==0){
+tTry++;
+if(tTry<10)
+window.setTimeout("resizeTop();","100");
+return;
+}
+tTry=0;
+var fwsw=wsw/1024.0,
+fwsh=wsh/120.0,
+high=Math.round(100*fwsh);
+moveObj("mainImg",'','',high,wsw);
+moveObj("mainTbar",high,'',wsh-high,wsw);
+moveObj("frozen_bar",high,'',wsh-high,wsw);
+high=Math.round(102*fwsh);
+moveObj("userImg",high-1,wsw-330,16*fwsh);
+moveObj("sysIp",high,wsw-306);
+moveObj("lgoutImg",high,wsw-80,16*fwsh,16*fwsh);
+moveObj("lgoutTxt",high,wsw-56);
+moveObj("tabSave",high,'',wsh-high);
+moveObj("tabTool",high,'',wsh-high);
+moveObj("tabHelp",high,'',wsh-high);
+moveObj("imgSave",high,'',16*fwsh);
+moveObj("sepa1",high,'',16*fwsh);
+moveObj("imgTool",high,'',16*fwsh);
+moveObj("sepa2",high,'',16*fwsh);
+moveObj("imgHelp",high,'',16*fwsh);
+}
+function frozen(){showObj('frozen_bar');}
+function unfrozen(){hideObj('frozen_bar');}
+</script>
+<style>
+<!--
+.tabTool{position:absolute;top:93;left:42;cursor:pointer;z-index:2;height:18;color:#FFFFFF;font-size:12;font-family:Arial;
+background:transparent;border:none;}
+.tabTool2{position:absolute;top:93;left:42;cursor:pointer;background:#136393;border:solid;border-width:1;border-color:#136393;}
+.frozen_bar{position:absolute;top:92;left:0;background-color:white;filter:alpha(opacity=40);
+opacity:0.4;-moz-opacity:0.4;z-index:10010;visibility:hidden;height:20}
+font{color:white;font-size:12;font-family:Arial;}
+.font8{position:absolute;color:white;font:12 Arial;}
+-->
+</style>
+</head>
+<body LEFTMARGIN=0 TOPMARGIN=0 onresize="resizeTop();">
+<form name=topForm target='_parent'>
+<script>
+showimg("mainImg","banner.jpg",'','border:0;','hideMenuTip();');
+docW("</a></DIV>");
+showimg("mainTbar","blackbar.gif",'',"left:0;",'hideMenuTip();');
+docW("<div id=frozen_bar class='frozen_bar'></div>");
+showimg("userImg",'',"user");
+docW("<div id=sysIp class=font8>"+Tip0100+" - "+ds_adminIP+"</div>");
+showimg("lgoutImg",'',"logout");
+docW("<div id=lgoutTxt class=font8 STYLE='cursor:pointer;' "
++"onMouseOver='showLogoutTip();' onMouseDown='Continue();'>"+Logout0100+"</DIV>");
+showimg("imgSave",'',"save","left:20;");
+showTable('tabSave','tabTool',',40',0,1,'','',
+'onClick="showMenu(2);" onmouseover="chgBorder(this);showMenu(2);" onmouseout="bckBorder(this);"');
+showTRTD(g_Sp3+Menu0100+g_Sp3+g_icTriangle+g_Sp3);
+docW('</table>');
+showimg("sepa1",'',"divide","left:120;");
+showimg("imgTool",'',"tool","left:140;");
+showTable('tabTool','tabTool',',160',0,1,'','',
+'onClick="showMenu(1);" onmouseover="chgBorder(this);showMenu(1);" onmouseout="bckBorder(this);"');
+showTRTD(g_Sp3+Menu0101+g_Sp3+g_icTriangle+g_Sp3);
+docW('</table>');
+showimg("sepa2",'',"divide","left:240;");
+showimg("imgHelp",'',"help","left:260;");
+showTable('tabHelp','tabTool',',280',0,1,'','',
+'onClick="showMenu(3);" onmouseover="chgBorder(this);showMenu(3);" onmouseout="bckBorder(this);"');
+showTRTD(g_Sp3+Menu0103+g_Sp3+g_icTriangle+g_Sp3);
+docW('</table></form>');
+unfrozen();
+resizeTop();
+</script>
+</body>
+</html>
