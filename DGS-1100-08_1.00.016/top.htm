@@ -7,8 +7,8 @@ var tTry=0;
 function chgBorder(obj){obj.className="tabTool2";}
 function bckBorder(obj){obj.className="tabTool";}
 function Continue(){
-if(confirm(Logout0101))
-submitForm(topForm,"logout.cgi");
+if(confirm(Logout0101)) console.log('log out')
+
 }
 function hideMenuTip(){
 if(p&&Defined(p.leftMenu)&&Defined(p.leftMenu.hiddenAllMenu))
