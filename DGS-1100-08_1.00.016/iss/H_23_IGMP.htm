@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'IGMP.js');
+</script>
+<head>
+<body>
+<form name=IGMPSnooping>
+<script>
+genHdWksp(IGMP0100,186);
+showFieldset("diFS",IGMP0101,40,130);
+showTable('tabContent','tabContent');
+showTRTD(IGMP0101,'25%');
+showTD(strRadioEnable('IGS',ds_IGMPSEn));
+showTD(strButton('',BT0104,'btnText','submitForm(IGMPSnooping, "IGMPSNState.cgi");'),'','right');
+showNulLn();
+showLine('',Pub0113+MIGMP100);
+docW("</table></form>");
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+<body>
+</html>

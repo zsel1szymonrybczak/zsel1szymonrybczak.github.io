@@ -1,0 +1,103 @@
+<HTML>
+    <head>
+    <script>document.write(parent.Prefix);</script>
+    <script>
+    jsInclude(1,'STP_Port.js');
+    var dfG,dfP,bRstp;
+    function applyForm(){
+    with(dfP){
+    var plst='';
+    for(i=0;i<g_PortNum;i++){
+    plst+=((i>=pt_f.selectedIndex&&i<=pt_t.selectedIndex)||
+    (ds_STPPtList[i][0]==state.value))?'1':'0';
+    }
+    if(!isCoverTrunkingPort(plst))return errSelect(pt_f,MSTPPT100);
+    submitForm(dfP,"STP_port.cgi");
+    }
+    }
+    function getData(){
+    var aData=new Array();
+    for(var i=0;i<g_PortNum;i++){
+    var aSrc=ds_STPPtList[i];
+    aData[i]=new Array();
+    aData[i][0]=FormPt(i-0+1);
+    aData[i][1]=bRstp?ASTPPT100[aSrc[0]]:Pub0104;
+    aData[i][2]=ASTPPT101[aSrc[1]];
+    }
+    return aData;
+    }
+    function en_chk(){
+    with(dfP)
+    pt_f.disabled=pt_t.disabled=state.disabled=apply.disabled=!bRstp;
+    }
+    function Refresh(){
+    genListCont("STPPtSet",getData());
+    resizeWS();
+    EnableObj('refresh');
+    }
+    </script>
+    </head>
+    <body>
+    <form name=formSTP_Port>
+    <script>
+    dfP=d.formSTP_Port;
+    bRstp=(ds_STPEn==1&&ds_RSTPMode==1);
+    var th=18*g_PortNum+22;
+    genHdWksp(STPPT0100,156+th);
+    showFieldset("diFS",STPPT0100,40,100+th);
+    showTable('tabContent','tabContent');
+    showTRTD(Pub0108,'14%');
+    showTD(Pub0109,'20%');
+    showTD(STPPT0101,'30%');
+    showTRTD(strSelectPort('pt_f','chgToPortIndex(this, dfP.pt_t);'));
+    showTD(strSelectPort('pt_t','chkFromPortRight(dfP.pt_f, this);',g_PortNum));
+    showTD(strSelectOption('state',ASTPPT100,bRstp?2:1));
+    docW("<td align=right>");showButton('apply',BT0104,'btnText','applyForm();');
+    showButton('refresh',BT0121,'btnText','this.disabled=1;getDataJS("STP_Port.js", Refresh);');
+    docW("</table></form>");
+    hdItem=[[Pub0102,'20%'],[STPPT0101,'30%'],[Pub0114,'50%']];
+    genList("STPPtSet",hdItem,120,42,1,30,1);
+    recRSItem('diFS',20,1);
+    recRSItem('tabContent',40);
+    Refresh();
+    en_chk();
+    </script>
+    <!-- Code injected by live-server -->
+<script type="text/javascript">
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script></body>
+    </html>

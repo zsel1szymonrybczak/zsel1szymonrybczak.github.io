@@ -1,0 +1,77 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'PortSec.js');
+var dPS;
+function apply(){
+with(dPS){
+if(en.selectedIndex==1)
+for(var i=port_f.selectedIndex;i<=port_t.selectedIndex;i++)
+if(isTrunkingPort(i+1))return alert(MPortSec0100);
+if(!checkNumberInput(MaxAdd,0,g_MaxLearningAdd))return;
+if(isAlDisLearn())return alert(MPortSec0101);
+submitForm(dPS,"port_sec.cgi");
+}
+}
+function isAlDisLearn(){
+with(dPS){
+if(MaxAdd.value!=0)return false;
+if(ds_SMacList.length!=0)return false;
+for(var pt=0;pt<g_PortNum;pt++){
+if(pt<port_f.selectedIndex||pt>port_t.selectedIndex){
+if(ds_DisLearn[0]!=1)return false;
+if(ds_DisLearn[1].charAt(pt)=='1'&&ds_PSList[pt][1]!=0)
+return false;
+}
+}
+}
+return true;
+}
+function en_chk(){
+with(dPS){
+MaxAdd.disabled=(en.selectedIndex==0);
+if(MaxAdd.disabled)
+MaxAdd.value=g_MaxLearningAdd;
+}
+}
+function getData(){
+var aData=new Array();
+for(var i=0;i<g_PortNum;i++){
+var aSrc=ds_PSList[i];
+aData[i]=new Array();
+aData[i][0]=FormPt(i-0+1);
+aData[i][1]=PArr002[aSrc[0]];
+aData[i][2]=aSrc[1];
+}
+return aData;
+}
+</script>
+</head>
+<body>
+<form name=portsec>
+<script>
+dPS=d.portsec;
+genHdWksp(Tree0530,316);
+showFieldset("diFS",Tree0530,40,260);
+showTable('tabContent','tabContent');
+showTRTD(Pub0108,'15%');
+showTD(Pub0109,'15%');
+showTD(PortSec0104,'15%');
+showTD(PortSec0105,'30%');
+showTRTD(strSelectPort('port_f','chgToPortIndex(this,dPS.port_t);'));
+showTD(strSelectPort('port_t','chkFromPortRight(dPS.port_f,this);',g_PortNum));
+showTD(strSelectOption('en',PArr002,'','','en_chk();'));
+showTD(strText('MaxAdd','flat',4)+g_Sp1+g_Lbkt+0+g_WavL+g_MaxLearningAdd+g_Rbkt);
+showTD(strButton('',BT0104,'btnText','apply();'),'','right','',2);
+docW("</tr></table></form>");
+hdItem=[[Pub0102,'20%'],[PortSec0104,'40%'],[PortSec0105,'40%']];
+genList("BWSet",hdItem,116,42,1,30,1);
+genListCont("BWSet",getData());
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+en_chk();
+</script>
+</body>
+</html>

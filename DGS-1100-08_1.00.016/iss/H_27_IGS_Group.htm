@@ -1,0 +1,221 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'IgsGroup.js');
+var iSHg;
+function del_check(num){
+with(mul_entry){
+aItem=ds_igsGroup[num];
+vid.value=aItem[0];
+group.value=Int2IPString(aItem[1]);
+deleteAll.value='0';
+submitForm(mul_entry,"igs_dyngrp_del.cgi");
+}
+}
+function delete_all(){
+if(confirm(MMUTENTR0100)){
+mul_entry.deleteAll.value='1';
+submitForm(mul_entry,"igs_dyngrp_del.cgi");
+}
+}
+function CannotDel(idx){
+for(var i in ds_staticGrp){
+if(ds_staticGrp[i][0]==ds_igsGroup[idx][0]&&
+ds_staticGrp[i][1]==ds_igsGroup[idx][1]&&
+ds_staticGrp[i][2]==ds_igsGroup[idx][2])
+return 1;
+}
+return 0;
+}
+function getData(){
+var aData=new Array();
+for(var i in ds_igsGroup){
+var aSrc=ds_igsGroup[i];
+aData[i]=new Array();
+aData[i][0]=i-0+1;
+if(ds_QVEnable&&!ds_AsyVlanEn){
+aData[i][1]=aSrc[0];
+aData[i][2]='';
+for(var v in ds_QVLANList){
+if(ds_QVLANList[v][0]==aSrc[0]){
+aData[i][2]=ds_QVLANList[v][1];
+break;
+}
+}
+if(aData[i][2]=='')
+aData[i][2]=g_Sp1;
+}
+else{
+aData[i][1]=Pub0110;
+aData[i][2]=g_Sp1;
+}
+aData[i][3]=Int2IPString(aSrc[1]);
+aData[i][4]=getPtChList(Int2PortList(aSrc[2],g_PortNum),'1',8);
+aData[i][5]=strButton('',BT0110,'btnInGray','del_check('+i+');',CannotDel(i)?'disabled':'');
+}
+return aData;
+}
+function Refresh(){
+genListCont("ListS",getData());
+resizeWS();
+EnableObj('btRefresh');
+}
+function chk_grp(){
+with(staGrp){
+if((!ds_QVEnable||ds_AsyVlanEn||checkIntegerInput(vid,1,4094))&&
+checkIntegerInput(grpIP[0],224,239)&&
+checkIntegerInput(grpIP[1],0,255)&&
+checkIntegerInput(grpIP[2],0,255)&&
+checkIntegerInput(grpIP[3],0,255))
+{
+if(grpIP[0].value==224&&grpIP[1].value==0)
+if(!checkIntegerInput(grpIP[2],1,255))
+return false;
+if(grpIP[1].value==0&&grpIP[2].value==0)
+if(!checkIntegerInput(grpIP[3],1,255))
+return false;
+grp.value='';
+for(i=0;i<4;i++){
+grp.value+=grpIP[i].value;
+if(i<3)grp.value+='.';
+grpIP[i].disabled=1;
+}
+var plst='',v,vmb="UUUUUUUU";
+if(ds_QVEnable&&!ds_AsyVlanEn){
+for(v in ds_QVLANList)
+if(ds_QVLANList[v][0]==vid.value)
+vmb=ds_QVLANList[v][2];
+}
+for(i=0;i<g_PortNum;i++){
+if((i>=port_f.selectedIndex&&i<=port_t.selectedIndex)){
+if(vmb.charAt(i)=='0'){
+alert(FormPt(i+1)+MMUTENTR0102);
+return false;
+}
+plst+='1';
+}
+else
+plst+='0';
+}
+if(!isCoverTrunkingPort(plst)){
+errSelect(port_f,MMUTENTR0101);
+return false;
+}
+return true;
+}
+return false;
+}
+}
+function addSta(){
+if(chk_grp()){
+submitForm(staGrp,"igs_staport_add.cgi");
+}
+else for(i=0;i<4;i++){
+staGrp.grpIP[i].disabled=0;
+}
+}
+function delSta(){
+if(chk_grp()){
+submitForm(staGrp,"igs_staport_del.cgi");
+}
+}
+function delStaGrp(num){
+staDel.group.value=num;
+submitForm(staDel,"igs_stagrp_del.cgi");
+}
+function resize(){
+var hg=getHeight('tabBigTitle')-iSHg-70;
+var hgC=getHeight('listListS')+50+20;
+setHeight('diFS1',hg<hgC?hg:hgC);
+}
+</script>
+</head>
+<body onresize="resize();">
+<form name=staGrp>
+<script>
+iSHg=140+ds_staticGrp.length*21;
+if(iSHg>300)iSHg=300;
+genHdWksp(Tree03612,iSHg+256);
+showFieldset("diFS",IGSSG0100,40,iSHg);
+showFieldset("diFS1",MUTENTR0100,iSHg+50,100);
+hideInput('grp');
+showTable('tabStaGrp','tabContent');
+if(ds_QVEnable&&!ds_AsyVlanEn){
+showTRTD(Pub0100,'15%');
+showTD(g_Sp1+IGSSG0101,'28%');
+}
+else{
+showTRTD(g_Sp1+IGSSG0101,'28%');
+}
+showTD(Pub0108,'10%');
+showTD(Pub0109,'10%');
+showTD('','37%');
+if(ds_QVEnable&&!ds_AsyVlanEn){
+showTRTD(strText('vid','flatL',4));
+showTD(g_Sp1+strShowIP('staGrp','grpIP',''));
+}
+else{
+showTRTD(g_Sp1+strShowIP('staGrp','grpIP',''));
+}
+showTD(strSelectPort('port_f','chgToPortIndex(this,staGrp.port_t);'));
+showTD(strSelectPort('port_t','chkFromPortRight(staGrp.port_f,this);',g_PortNum));
+showTD(strButton('',BT0130,'btnText','addSta();')+g_Sp1+
+strButton('',BT0110,'btnText','delSta();'),'','right');
+docW("</form><form name=staDel>");
+hideInput('group');
+showNulLn(5);
+showLine(''," (&nbsp;"+Static0104+g_MaxStaIGSNum+"&nbsp;)");
+var i,hdItem=[[MUTENTR0101,'10%'],[Pub0125,'10%'],[Pub0126,'14%'],
+[MUTENTR0102,'18%'],[MUTENTR0104,'*'],[BT0110,'72']];
+showLine();
+showDiv('tabSta','','overflow-y:auto;'+(iSHg<300?'':'height:200;'));
+showTable('','tabRelative');
+showTR('gh');
+for(i=0;i<6;i++){
+showTDcgd(hdItem[i][0],hdItem[i][1]);
+}
+for(i=0;i<ds_staticGrp.length;i++){
+var vnm='';
+var aMT=ds_staticGrp[i];
+showTR(i%2?'gw':'gx');
+showTDcgd(i-0+1);
+if(ds_QVEnable&&!ds_AsyVlanEn){
+for(var v in ds_QVLANList){
+if(ds_QVLANList[v][0]==aMT[0]){
+vnm=ds_QVLANList[v][1];
+break;
+}
+}
+if(vnm=='')
+vnm=g_Sp1;
+showTDcgd(aMT[0]);
+showTDcgd(vnm);
+}
+else{
+showTDcgd(Pub0110);
+showTDcgd(g_Sp1);
+}
+showTDcgd(Int2IPString(aMT[1]));
+showTDcgd(getPtChList(Int2PortList(aMT[2],g_PortNum),'1',8));
+showTDcgd(strButton('',BT0110,'btnInGray','delStaGrp('+i+');'));
+}
+docW("</table></div></table></form><form name=mul_entry>");
+hideInput('group');
+if(ds_QVEnable&&!ds_AsyVlanEn)hideInput('vid');
+hideInput('deleteAll','0');
+showTable('tabGrpTb','tabContent',iSHg+72);
+showTRTD(" (&nbsp;"+Static0104+g_MaxIGSNum+"&nbsp;)");
+showTD('','','right')
+docW(strButton('btRefresh',BT0121,'btnText','this.disabled=1;getDataJS("IgsGroup.js", Refresh);')+g_Sp1);
+showButton('',BT0111,'btnText','delete_all();');
+docW("</table></form>");
+genList("ListS",hdItem,iSHg+100,42,1,50,1);
+recRSItem('diFS',20,1);
+recRSItem('diFS1',20,1);
+recRSItem('tabStaGrp',40);
+recRSItem('tabGrpTb',40);
+Refresh();
+</script>
+</body>
+</html>

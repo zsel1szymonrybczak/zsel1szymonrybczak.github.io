@@ -1,0 +1,40 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'AsyVlan.js');
+function apply(){
+with(AsyVlan){
+if((ds_AsyVlanEn&&AsyVEn[0].checked)||
+(!ds_AsyVlanEn&&AsyVEn[1].checked))
+return;
+}
+if(confirm(MAsyVLAN0102))
+submitForm(AsyVlan,"Asy_vlan.cgi");
+}
+function chkEnable(){
+with(AsyVlan){
+if(!ds_QVEnable&&AsyVEn[0].checked){
+alert(MAsyVLAN0101);
+AsyVEn[1].checked=true;
+}
+}
+}
+</script>
+<head>
+<body>
+<form name=AsyVlan>
+<script>
+genHdWksp(Tree0324,126);
+showFieldset("diFS",Tree0324,40,66);
+showTable('tabContent','tabContent');
+showTRTD(AsyVLAN0100,'30%');
+showTD(strRadioEnable('AsyVEn',ds_AsyVlanEn,'chkEnable();'));
+showTD(strButton('',BT0104,'btnText','apply();'),'','right');
+docW("</table></form>");
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+<body>
+</html>

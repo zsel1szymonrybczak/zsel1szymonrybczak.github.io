@@ -1,0 +1,62 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'Bandwidth.js');
+var dPS;
+function apply(){
+with(dPS){
+var	sPtBm='';
+for(var i=0;i<g_PortNum;i++)
+sPtBm+=(i<port_f.selectedIndex||i>port_t.selectedIndex)?'0':'1';
+if(!isCoverTrunkingPort(sPtBm))return alert(MBandwidth0105);
+submitForm(dPS,"bandwidth_ctrl.cgi");
+}
+}
+function strRate(rate){
+if(rate==0)
+return VBandwidth120[0];
+if(rate<1024)
+return rate+' kbps';
+else
+return rate/1024+' Mbps';
+}
+function getData(){
+var aData=new Array();
+for(var i=0;i<g_PortNum;i++){
+var aSrc=ds_BWList[i];
+aData[i]=new Array();
+aData[i][0]=FormPt(i-0+1);
+aData[i][1]=strRate(aSrc[0]);
+aData[i][2]=strRate(aSrc[1]);
+}
+return aData;
+}
+</script>
+</head>
+<body>
+<form name=portset>
+<script>
+dPS=d.portset;
+genHdWksp(Bandwidth0100,316);
+showFieldset("diFS",Bandwidth0100,40,260);
+showTable('tabContent','tabContent');
+showTRTD(Pub0108,'15%');
+showTD(Pub0109,'15%');
+showTD(Bandwidth0103,'15%');
+showTD(Bandwidth0104,'15%');
+showTRTD(strSelectPort('port_f','chgToPortIndex(this,dPS.port_t);'));
+showTD(strSelectPort('port_t','chkFromPortRight(dPS.port_f,this);',g_PortNum));
+showTD(strSelectOption('BWtype',VBandwidth121));
+showTD(strSelectOption('rate',VBandwidth120));
+showTD(strButton('',BT0104,'btnText','apply();'),'','right','',2);
+docW("</tr></table></form>");
+hdItem=[[Pub0102,'20%'],[Bandwidth0106,'40%'],[Bandwidth0107,'40%']];
+genList("BWSet",hdItem,116,42,1,30,1);
+genListCont("BWSet",getData());
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+</body>
+</html>

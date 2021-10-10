@@ -1,0 +1,124 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'SurvVLAN.js');
+var dfCV,dOUI,dLST;
+function onChgState(){
+with(dfCV){
+if(SVEn[0].checked&&ds_VVEnable=="1")
+if(ds_QVLANList[SVid.selectedIndex][0]==ds_VV_VID)
+return errSelect(SVid,AutoCVlan0142);
+submitForm(dfCV,"s_vlan_setting.cgi");
+}
+}
+function chkEnable(){
+var enBt;
+with(dfCV){
+enFg=SVEn;
+isEn=enFg[0].checked;
+if(isEn&&ds_QVEnable==0){
+alert(AutoCVlan0114);
+enFg[0].checked=isEn=false;
+enFg[1].checked=true;
+}
+SVid.disabled=!isEn;
+SPri.disabled=!isEn;
+SPri.selectedIndex=3-g_queMap[ds_SVPriorty];
+enBt=(ds_SVEnable==0||!isEn);
+}
+with(dOUI){
+type.disabled=enBt;
+desc.disabled=enBt;
+mac.disabled=enBt;
+addOUI.disabled=enBt;
+}
+for(i=0;i<ds_MACList.length;i++)
+dLST.delBtn[i].disabled=(ds_MACList[i][3]==0||enBt);
+}
+function addUserOUI(){
+with(dOUI){
+if(ds_MACList.length>=g_DefaultOUINum+g_MaxCustSOUINum)
+return alert(AutoCVlan0129+g_MaxCustSOUINum+AutoCVlan0130);
+if(!checkStringInput(desc,AutoCVlan0125))return;
+var dOTV=mac.value,
+OuiU=dOTV.toUpperCase(),
+OuiU8=OuiU.substring(0,8),
+ch9=OuiU.charAt(9);
+if(dOTV=='')return errInput(mac,AutoCVlan0126);
+if((OuiU.substring(0,10)==ds_MACList[0][2].substring(0,10))||
+(OuiU8==ds_MACList[1][2].substring(0,8)&&ch9>='0'&&ch9<='3'))
+return errInput(mac,AutoCVlan0131);
+for(i=g_DefaultOUINum;i<ds_MACList.length;i++)
+if(OuiU==ds_MACList[i][2])return errInput(mac,AutoCVlan0132);
+for(i=0;i<ds_OUIList.length;i++)
+if(OuiU8==ds_OUIList[i][1].substring(0,8))return errInput(mac,AutoCVlan0143);
+if(CheckMACformat(dOTV,false,false,false)=='OK')
+submitForm(dOUI,"s_vlan_add.cgi");
+}
+}
+function deloui(index){
+dLST.cindex.value=index;
+submitForm(dLST,"s_vlan_del.cgi");
+}
+</script>
+</head>
+<body>
+<form name=formCVlan>
+<script>
+dfCV=d.formCVlan;
+genHdWksp(AutoCVlan0100,460);
+showFieldset("diFS",AutoCVlan0104,40,90);
+showFieldset("diFS1",AutoCVlan0115,140,126);
+showFieldset("diFS2",AutoCVlan0105,276,166);
+showTable('tabContent','tabContent');
+showTRTD(AutoCVlan0103,'25%');
+showTD(strRadioEnable('SVEn',ds_SVEnable,'chkEnable();'),'','','',3);
+showTRTD(Pub0125);
+showTD(strSelectVLAN('SVid',ds_SV_VID));
+showTD(Pub0115);
+showTD(strSelectOption('SPri',PArr001,2,1));
+showTD(strButton('',BT0104,'btnText','onChgState();'),'','right');
+docW("</table></form><form name=formOUI>");
+dOUI=d.formOUI;
+showTable('tabUserOUI','tabContent',166);
+showLine('',AutoCVlan0116);
+showTRTD();
+showTRTD(AutoCVlan0111);showTD(AutoCVlan0112);showTD(Pub0127+AutoCVlan0133,'','','',2);
+showTRTD(strSelectOption('type',AutoCVlanA001));
+showTD(strText('desc','flatL',20));
+showTD(strText('mac','flatL',17,'',120));
+showTD(strButton('addOUI',BT0130,'btnText','addUserOUI();'),'','right');
+showTRTD();
+showTRTD(Pub0113+AutoCVlan0117+g_MaxCustSOUINum+AutoCVlan0128,'','left','',4);
+docW("</table></form><form name=formList>");
+dLST=d.formList;
+hideInput('cindex');
+showTable('mainGray','tabRelative','306,52',0,0,'','position:absolute;');
+showTR('gh');
+showTD(g_Sp3+Pub0101,'5%');
+showTD(AutoCVlan0111,'27%');
+showTD(AutoCVlan0112,'38%');
+showTD(Pub0127,'20%');
+showTD(AutoCVlan0119,'10%');
+for(i=0;i<ds_MACList.length;i++){
+showTR(i%2?'gw':'gx');
+showTD(g_Sp3+"0"+(i+1));
+if(ds_MACList[i][3]==0)
+docW("<td>"+AutoCVlan0140+"<td>"+AutoCVlan0141+"<td>"+ds_MACList[i][2]);
+else
+docW("<td>"+AutoCVlanA001[ds_MACList[i][0]]+"<td>"+ds_MACList[i][1]+"<td>"+ds_MACList[i][2]);
+showTD(strButton('delBtn',BT0110,'btnInGray','deloui('+i+');'));
+}
+docW("</table></form>");
+recRSItem('diFS',20,1);
+recRSItem('diFS1',20,1);
+recRSItem('diFS2',20,1);
+recRSItem('tabContent',40);
+recRSItem('tabUserOUI',40);
+recRSItem('mainGray',42);
+resizeWS();
+chkEnable();
+</script>
+</body>
+</html>

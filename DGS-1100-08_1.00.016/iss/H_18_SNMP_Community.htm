@@ -1,0 +1,52 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'SNMP_Community.js');
+function apply(){
+if(snmpcom.strCom.value=='')
+return errInput(snmpcom.strCom,MSNMP1101);
+for(var i in ds_SnmpCom){
+if(snmpcom.strCom.value==ds_SnmpCom[i])
+return errInput(snmpcom.strCom,MSNMP1102);
+}
+if(checkStringInput(snmpcom.strCom,MSNMP1101))
+submitForm(snmpcom,"snmp_com.cgi");
+}
+function SelChg(){
+snmpcom.strCom.value=ds_SnmpCom[snmpcom.ComType.selectedIndex];
+}
+</script>
+</head>
+<body>
+<form name=snmpcom>
+<script>
+genHdWksp(Tree0222,226);
+showFieldset("diFS",SNMP1101,40,170);
+showTable('tabContent','tabContent');
+showTRTD(SNMP1102,80);
+showTD(strSelectOption('ComType',ASNMP0100,0,'','SelChg();','style="width:100;"'),110);
+showTD(SNMP1103,110);
+showTD(strText('strCom','flatL',32,ds_SnmpCom[0]),170);
+showTD(strButton('',BT0104,'btnText','apply();'),'*','right');
+showLine('hr1');
+showLine('',SNMP1109);
+showLine();
+showTable('','tabRelative');
+showTR('gh');
+showTDcgd(SNMP1102,'45%');
+showTDcgd(SNMP1103,'55%');
+showTR('gw');
+showTDcgd(SNMP1105);
+showTDcgd(ds_SnmpCom[0]);
+showTR('gx');
+showTDcgd(SNMP1106);
+showTDcgd(ds_SnmpCom[1]);
+docW("</table></table></form>");
+recRSItem('diFS',20,1);
+recRSItem('hr1',40);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+</body>
+</html>

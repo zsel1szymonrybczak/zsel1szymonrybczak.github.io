@@ -1,0 +1,154 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'VoiceVLAN.js');
+var dOUI,dLST,iMHigh=0;
+function onChgState(){
+with(formVVlan){
+if(VVEn[0].checked&&ds_SVEnable=="1"){
+if(ds_QVLANList[VVid.selectedIndex][0]==ds_SV_VID)
+return errSelect(VVid,AutoVVlan0134);
+}
+submitForm(formVVlan,"v_vlan_setting.cgi");
+}
+}
+function chkvvlanState(){
+with(d.formVVlan){
+if(VVEn[0].checked&&ds_QVEnable==0){
+alert(AutoVVlan0114);
+VVEn[1].checked=true;
+}
+VVid.disabled=VPri.disabled=VVEn[1].checked;
+VPri.selectedIndex=3-g_queMap[ds_VVPriorty];
+enBt=(ds_VVEnable==0)||VVEn[1].checked;
+}
+with(dOUI){
+if(enBt){
+descD[0].disabled=teleD[0].disabled=enBt;
+descD[1].disabled=teleD[1].disabled=enBt;
+}
+else
+onChgAddOuiMtd();
+addOUI.disabled=sct[0].disabled=sct[1].disabled=enBt;
+}
+with(dLST){
+if(ds_OUIList.length==1)delBtn.disabled=enBt;
+else
+for(i in ds_OUIList)delBtn[i].disabled=enBt;
+}
+}
+function onChgAddOuiMtd(){
+with(dOUI){
+teleD[0].disabled=true;
+descD[0].disabled=sct[1].checked;
+descD[1].disabled=teleD[1].disabled=sct[0].checked;
+}
+}
+function onChgDftOui(){
+dOUI.teleD[0].value=g_DftOUITable[dOUI.descD[0].options.selectedIndex][1];
+}
+function onAddOui(){
+with(dOUI){
+isUser=sct[1].checked;
+desIn=descD[isUser?1:0];
+telIn=teleD[isUser?1:0];
+teleVal=teleD[isUser?1:0].value;
+}
+with(formOUIAdd){
+if(isUser){
+if(ds_VVUserOUINum>=g_MaxCustOUINum)
+return alert(AutoVVlan0129+g_MaxCustOUINum+AutoVVlan0130);
+if(!checkStringInput(desIn,AutoVVlan0125))return;
+if(teleVal=='')
+return errInput(telIn,AutoVVlan0126);
+if(CheckMACformat(teleVal+"-00-00-01",false,false,false)!='OK')
+return errInput(telIn);
+oui.value=teleVal+"-XX-XX-XX";
+desc.value=desIn.value;
+type.value=0;
+}
+else
+type.value=dOUI.descD[0].selectedIndex+1;
+oui8=teleVal.substring(0,8).toUpperCase();
+for(i in ds_OUIList)
+if(oui8==ds_OUIList[i][1].substring(0,8))
+return isUser?errInput(telIn,AutoVVlan0132):errSelect(desIn,AutoVVlan0132);
+for(i in ds_MACList)
+if(oui8==ds_MACList[i][2].substring(0,8))
+return isUser?errInput(telIn,AutoVVlan0139):errSelect(desIn,AutoVVlan0139);
+submitForm(formOUIAdd,"v_vlan_add.cgi");
+}
+}
+function onDelOui(index){
+dLST.vvindex.value=index;
+submitForm(dLST,"v_vlan_del.cgi");
+}
+</script>
+</head>
+<body>
+<form name=formVVlan>
+<script>
+iMHigh=(ds_OUIList.length)*19+24;
+genHdWksp(AutoVVlan0100,350+iMHigh);
+showFieldset("diFS",AutoVVlan0104,40,90);
+showFieldset("diFS1",AutoVVlan0115,140,140);
+showFieldset("diFS2",AutoVVlan0105,290,iMHigh+46);
+showTable('tabVVlan','tabContent');
+showTD(AutoVVlan0103,'25%');
+showTD(strRadioEnable('VVEn',ds_VVEnable,'chkvvlanState();'),'','','',3);
+showTRTD(Pub0125);
+showTD(strSelectVLAN('VVid',ds_VV_VID));
+showTD(Pub0115);
+showTD(strSelectOption('VPri',PArr001,2,1));
+showTD(strButton('',BT0104,'btnText','onChgState();'),'','right');
+docW("</form><form name=formOUIAdd>");
+hideInput('oui');
+hideInput('type');
+hideInput('desc');
+docW("</form><form name=formOUI>");
+dOUI=d.formOUI;
+showTable('tabUserOUI','tabContent',160);
+showLine('',AutoVVlan0116);
+showTRTD();showTD(AutoVVlan0112);showTD(AutoVVlan0113+AutoVVlan0133,'','','',2);
+showTRTD(strRadio('sct',1,1,'onChgAddOuiMtd();',AutoVVlan0136),'25%');
+showTD('','25%');showSelect('descD','','onChgDftOui();');
+for(i in g_DftOUITable){
+showOption(g_DftOUITable[i][0]);
+}
+docW("</select>");
+showTD(strText('teleD','flatMc',17,'',120),'30%');
+showTRTD(strRadio('sct',0,'','onChgAddOuiMtd();',AutoVVlan0137));
+showTD(strText('descD','flat',20));
+showTD(strText('teleD','flat',8,'',65)+AutoVVlan0138);
+showTD(strButton('addOUI',BT0130,'btnText','onAddOui();'),'','right');
+showLine('',Pub0113+AutoVVlan0117+g_MaxCustOUINum+AutoVVlan0135);
+docW("</table></form><form name=formList>");
+dLST=d.formList;
+hideInput('vvindex');
+showTable('mainGray','tabContent','320,52',0,0);
+showTR('gh');
+showTD(g_Sp3+Pub0101,'10%');
+showTD(AutoVVlan0112,'35%');
+showTD(AutoVVlan0113,'40%');
+showTD(AutoVVlan0119,'10%','center');
+for(i=0;i<ds_OUIList.length;i++){
+showTR(i%2?'gw':'gx');
+showTD(g_Sp3+Eq2WdInt(i+1));
+showTD(ds_OUIList[i][0]);
+showTD(ds_OUIList[i][1]);
+showTD(strButton('delBtn',BT0110,'btnInGray','onDelOui('+i+');'));
+}
+docW("</table></form>");
+recRSItem('diFS',20,1);
+recRSItem('diFS1',20,1);
+recRSItem('diFS2',20,1);
+recRSItem('tabVVlan',40);
+recRSItem('tabUserOUI',40);
+recRSItem('mainGray',40);
+resizeWS();
+chkvvlanState();
+onChgDftOui();
+</script>
+</body>
+</html>

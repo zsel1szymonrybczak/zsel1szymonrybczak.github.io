@@ -1,0 +1,79 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'CableDiag.js');
+function ShowState(iPair){
+var aSt=[CableDiag0112,CableDiag0113,CableDiag0114,CableDiag0115,Pub0110];
+var iIdx=ds_MDIStatus[iPair][0];
+return((iIdx<0||iIdx>4)?Pub0105:aSt[iIdx]);
+}
+function ShowLen(iPair){
+var stat=ds_MDIStatus[iPair];
+var sLen=stat[1];
+if(stat[0]==0||sLen<0)
+sLen=Pub0110;
+else if(sLen==0)
+sLen=CableDiag0118;
+return sLen;
+}
+function strTestHD(){
+return(strTable('','tabRelative')+"<tr class=gh>"+
+strTD(g_Sp1+Pub0102,'20%')+
+strTD(CableDiag0103,'40%')+
+strTD(CableDiag0104,'40%'));
+}
+function ShowTestRt(){
+var str1=strTestHD();
+if(ds_MDIStatus.length>0){
+str1+="<tr class=gx style='height:66;'>"+strTD(g_Sp1+FormPt(ds_PortTest))+"<td>";
+var str2="<td>";
+for(i=0;i<4;i++){
+str1+=CableDiag0106+(i+1)+":&nbsp;"+ShowState(i)+"<br>";
+str2+=CableDiag0106+(i+1)+":&nbsp;"+ShowLen(i)+"<br>";
+}
+str1+="</td>"+str2+"</td></tr>";
+}
+getObj('TestRt').innerHTML=str1+"</table>";
+}
+function ShowWait(){
+var str=strTestHD()+"<tr class=gx style='height:66;'>";
+str+=strTD("<font size=3>"+CableDiag0111+"</font>",'','center','',3);
+getObj('TestRt').innerHTML=str+"</table>";
+}
+function TestCable(){
+with(formCable){
+if(ds_PortSetting[testport.selectedIndex][1]==0)
+return errSelect(testport,CableDiag0119);
+ShowWait();
+submitForm(formCable,"CableDiag.cgi");
+DisableObj('BTest');
+DisableObj('testport');
+}
+}
+</script>
+</head>
+<body>
+<form name=formCable>
+<script>
+genHdWksp(CableDiag0100,360);
+showFieldset("diFS",CableDiag0100,40,300);
+showTable('tabContent','tabContent');
+showTRTD();
+docW(Pub0102+' '+strSelectPort('testport','',ds_PortTest));
+showTD(strButton('BTest',CableDiag0102,'btnText','TestCable();'),'','right');
+showNulLn(5);
+showTRTD("<div id=TestRt style='overflow:auto;'></div>",'','','',3);
+showNulLn(5);
+showTRTD(CableDiag0120,'','','',3);
+showNulLn();
+showTRTD(Pub0113,'','','',3);
+showTRTD(CableDiag0124+"<br>"+CableDiag0125,'','','',3);
+docW("</table></form>");
+ShowTestRt();
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+</body>
+</html>

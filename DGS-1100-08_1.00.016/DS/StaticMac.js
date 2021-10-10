@@ -1,0 +1,10 @@
+var g_DeviceInfo=['B1','QBMB2I1003699','28-3B-82-F7-7F-18'];
+var ds_QVEnable=1;
+var ds_PVID=[1,1,1,1,1,1,1,1];
+var ds_QVLANList=[[1, '', 'UUUUUUUU']];
+var ds_TrunkStat=0;
+var ds_TrunkList=['00000000','00000000'];
+var ds_PSList=[[0,4160],[0,4160],[0,4160],[0,4160],[0,4160],[0,4160],[0,4160],[0,4160]];
+var ds_DisLearn=[1,'11111111'];
+var ds_SMacList=[];
+var ds_AsyVlanEn=0;

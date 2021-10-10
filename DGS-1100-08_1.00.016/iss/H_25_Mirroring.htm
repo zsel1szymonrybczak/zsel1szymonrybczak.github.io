@@ -1,0 +1,103 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'Mirror.js');
+var dfM,g_PortNum;
+function CMcb(port){
+return d.src.rSrcP[port];
+}
+function setselectedport(ptSel){
+with(dfM){
+for(i=0;i<g_PortNum;i++){
+if(sTagP.selectedIndex!=i)
+CMcb(i).checked=(ptSel==ds_MirrorEn&&ds_MirrSrc.charAt(i)=='1');
+}
+}
+}
+function apply(){
+with(dfM){
+if(cEn[0].checked){
+if(isTrunkingPort(sTagP.selectedIndex+1))
+return errSelect(sTagP,MMirroring102);
+var sBM='';
+for(i=0;i<g_PortNum;i++)
+sBM+=CMcb(i).checked?'1':'0';
+if(sBM.indexOf('1')==-1)
+return alert(MMirroring100);
+if(!isCoverTrunkingPort(sBM))
+return alert(MMirroring103);
+SrcLst.value=sBM;
+}
+submitForm(dfM,"PortMirroring.cgi");
+}
+}
+function enableAllSniffer(){
+with(dfM){
+for(i=0;i<g_PortNum;i++){
+flag=sTagP.selectedIndex==i;
+if(flag)CMcb(i).checked=false;
+CMcb(i).disabled=flag;
+}
+}
+}
+function chkEnable(){
+with(dfM){
+ctrlFlag=cEn[1].checked;
+if(ctrlFlag){
+for(i=0;i<g_PortNum;i++)CMcb(i).disabled=true;
+}
+else
+enableAllSniffer();
+sTagP.disabled=ctrlFlag;
+sMode.disabled=ctrlFlag;
+}
+}
+function checkedTxtNot0(val){
+return(val!='0'&&val!=0)?'checked':'';
+}
+</script>
+</head>
+<body>
+<form name=formMirror>
+<script>
+dfM=d.formMirror;
+genHdWksp(Mirroring0100,290);
+showFieldset("diFS",Mirroring0100,40,236);
+hideInput('SrcLst');
+showTable("tabContent","tabContent");
+showTRTD(Mirroring0100,'25%');
+showTD(strRadioEnable('cEn',ds_MirrorEn!=0,'chkEnable();'));
+showLine('hr1');
+showTRTD(Mirroring0102);
+showTD(strSelectPort('sTagP','enableAllSniffer();',ds_MirrTag));
+showTRTD('');
+showTRTD(Mirroring0103);
+showTD(strSelectOption('sMode',PArr003,ds_MirrorEn-1,0,'setselectedport(this.selectedIndex)'));
+docW("</form><form name=src>");
+showTRTD('');
+showTRTD(Mirroring0104);
+showLine();
+showTable('','tabRelative');
+var NumLine=1;
+for(iLine=1;iLine<=NumLine;iLine++){
+showTR('gh');
+for(i=iLine;i<=g_PortNum;i+=NumLine)
+showTD(g_Sp1+FormPt(i),'','center');
+showTR('gx','','style="height:20;"');
+for(i=iLine;i<=g_PortNum;i+=NumLine){
+showTD(strChkBox('rSrcP',i-1,ds_MirrSrc.charAt(i-1)),'','center');
+}
+showNulLn(5);
+}
+docW("</table>");
+showTRTD(strButton('',BT0104,'btnText','apply();'),'','right','',2);
+docW("</table></form>");
+chkEnable();
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+recRSItem('hr1',40);
+resizeWS();
+</script>
+</body>
+</html>

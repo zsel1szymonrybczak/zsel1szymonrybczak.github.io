@@ -1,0 +1,150 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'QoS.js');
+var dQP;
+var arrColor=['72,120,170','13,40,123','48,124,31','143,0,0'];
+function q1pApply(){
+with(dQP){
+var pBM='';
+if(ds_QoSMode==0){
+for(var i=0;i<g_PortNum;i++)
+pBM+=((i>=port_f.selectedIndex&&i<=port_t.selectedIndex)||
+ds_defPrio[i]==qos.value)?"1":"0";
+if(!isCoverTrunkingPort(pBM))return alert(MPriority100);
+}
+submitForm(dQP,"qos_priority.cgi");
+}
+}
+function getData(){
+var aData=new Array();
+for(var i=0;i<g_PortNum;i++){
+aData[i]=new Array();
+aData[i][0]=FormPt(i-0+1);
+aData[i][1]=PArr001[ds_defPrio[i]];
+}
+return aData;
+}
+function getColor(){
+var aData=new Array();
+for(var i=0;i<g_PortNum;i++){
+aData[i]=new Array();
+aData[i][0]='';
+aData[i][1]='color:rgb('+arrColor[ds_defPrio[i]]+');';
+}
+return aData;
+}
+function getDSCPData(){
+var aData=new Array();
+for(var i=0;i<16;i++){
+aData[i]=new Array();
+for(var j=0;j<4;j++){
+aData[i][j*2]=i+j*16;
+aData[i][j*2+1]=PArr001[ds_dscpPrio[i+j*16]];
+}
+}
+return aData;
+}
+function getDSCPColor(){
+var aData=new Array();
+for(var i=0;i<16;i++){
+aData[i]=new Array();
+for(var j=0;j<4;j++){
+aData[i][j*2]='';
+aData[i][j*2+1]='color:rgb('+arrColor[ds_dscpPrio[i+j*16]]+');';
+}
+}
+return aData;
+}
+function strSelectDSCP(sID,sOnChange,ptSel)
+{
+var i,str=strSelect(sID,'dscpSel',sOnChange);
+if(!NotEmpty(ptSel))ptSel=0;
+for(i=0;i<=63;i++){
+str+=strOption(i,g_Sp6+i,i==ptSel);
+}
+str+="</select>";
+return str;
+}
+function resizeWidth(){
+if(ds_QoSMode==0){
+var obj=getObj('tabQoSTip');
+var hei=getHeight('listPrioritySet');
+setWidth('tabQoSTip',getSPWidth(54)-320);
+if(obj.clientHeight!=''&&obj.clientHeight!=0)
+{
+if(hei<obj.clientHeight+20)
+{
+hei=obj.clientHeight+20;
+setHeight('listPrioritySet',hei);
+}
+setTop('tabQoSTip',260+(hei-obj.clientHeight)/2);
+}
+}
+}
+</script>
+</head>
+<body onresize="resizeWidth();">
+<form name=qos_mode>
+<script>
+var tt,ihh;
+if(ds_QoSMode==0){tt=Priority0100;ihh=250;}
+else{tt=Priority0200;ihh=380;}
+genHdWksp(Priority0000,196+ihh);
+showFieldset("diFS",Priority0103,40,130);
+showFieldset("diFS1",tt,180,ihh);
+showTable('tabQosMode','tabContent');
+showTRTD(Priority0102);
+showTD(strRadio('QMode',0,ds_QoSMode==0,'',VPriority102));
+showTD(strRadio('QMode',1,ds_QoSMode,'',VPriority103));
+showTRTD(Priority0101);
+showTD(strRadio('mode',0,ds_QueMech==0,'',VPriority100));
+showTD(strRadio('mode',1,ds_QueMech,'',VPriority101));
+showTD(strButton('',BT0104,'btnText','submitForm(qos_mode, "qos_mode.cgi");'),'','right');
+showNulLn(5);
+showLine("",Pub0113+Priority0104);
+showLine("",g_Sp6+g_Sp6+Priority0105);
+docW('</table></form><form name=qos_p>');
+dQP=d.qos_p;
+showTable('tabContent','tabContent',206);
+if(ds_QoSMode==0){
+showTRTD(Pub0108,'20%');
+showTD(Pub0109,'20%');
+showTD(Pub0115,'*','','',2);
+showTRTD(strSelectPort('port_f','chgToPortIndex(this,dQP.port_t);'));
+showTD(strSelectPort('port_t','chkFromPortRight(dQP.port_f,this);',g_PortNum));
+}
+else{
+showTRTD(Priority0201,'20%');
+showTD(Priority0202,'20%');
+showTD(Pub0115,'*','','',2);
+showTRTD(strSelectDSCP('dscp_f','chgToPortIndex(this,dQP.dscp_t);'));
+showTD(strSelectDSCP('dscp_t','chkFromPortRight(dQP.dscp_f,this);',63));
+}
+showTD(strSelectOption('qos',PArr001,3,1));
+showTD(strButton('',BT0104,'btnText','q1pApply();'),'100','right');
+docW("</table></form>");
+if(ds_QoSMode==0){
+showTable('tabQoSTip','tabLogout','260,340');
+showTRTD(Priority0106+" <br>"+Priority0107,'','','','','style="text-align:left;"');
+docW("</table>");
+hdItem=[[Pub0102,100],[Pub0115,150]];
+genList("PrioritySet",hdItem,260,42,0,30,0,250);
+genListCont("PrioritySet",getData(),'',getColor());
+showObj('tabQoSTip');
+}
+else{
+hdItem=[[Priority0203,80],[Pub0115,75],[Priority0203,80],[Pub0115,75],
+[Priority0203,80],[Pub0115,75],[Priority0203,80],[Pub0115,75]];
+genList("PrioritySet",hdItem,260,42,0,30,0,620);
+genListCont("PrioritySet",getDSCPData(),'',getDSCPColor());
+}
+recRSItem('diFS',20,1);
+recRSItem('diFS1',20,1);
+recRSItem('tabQosMode',40);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+</body>
+</html>

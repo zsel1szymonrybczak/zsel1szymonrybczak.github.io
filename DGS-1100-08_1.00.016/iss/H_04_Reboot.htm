@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+</head>
+<body>
+<form name=reboot>
+<script>
+genHdWksp(Reboot0100,146);
+showFieldset("diFS",Reboot0100,40,90);
+showTable('tabContent','tabContent');
+showTRTD(Reboot0101+g_Sp6+
+strRadio('save',1,1,'',Reboot0105+g_Sp6)+
+strRadio('save',0,0,'',Reboot0106));
+showTD(strButton('',BT0120,'btnTextLong',
+'if(confirm(MReboot100))submitForm(reboot,"reboot.cgi");'),'','right');
+showNulLn(5);
+showTRTD(Reboot0102);
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script></table></form>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'SNMP_Host.js');
+function apply(){
+with(snmpHost){
+var	i,flag=true,
+dutIP=ds_IPInfo[1].split('.');
+for(i=0;i<4;i++){
+if(parseInt(DesIP[i].value)!=dutIP[i]){
+dutIP[i]=DesIP[i].value;
+if(isNaN(dutIP[i]))return errInput(DesIP[i],MSNMP2101);
+flag=false;
+}
+}
+if(CheckIPValid(dutIP)==1)return errInput(DesIP[0],MSNMP2101);
+if(flag)return errInput(DesIP[0],MSNMP2102);
+ip.value=dutIP.join('.');
+for(i=0;i<4;i++)
+DesIP[i].disabled=1;
+if(community.value=='')return errInput(community,MSNMP1101);
+submitForm(snmpHost,"snmp_host.cgi");
+}
+}
+</script>
+</head>
+<body>
+<form name=snmpHost>
+<script>
+genHdWksp(SNMP2101,170);
+showFieldset("diFS",SNMP2101,40,116);
+hideInput('ip','');
+showTable('tabContent','tabContent');
+showTRTD(SNMP2102,180);
+showTD(strShowIP('snmpHost','DesIP',ds_SnmpHost[0]));
+showTRTD(SNMP2103);
+showTD(strSelectOption('ver',ASNMP0101,ds_SnmpHost[1]));
+showTRTD(SNMP2105);
+showTD(strText('community','flatL',32,ds_SnmpHost[2]));
+showTD(strButton('',BT0104,'btnText','apply();'),'','right','',6);
+docW("</table></form>");
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+</body>
+</html>

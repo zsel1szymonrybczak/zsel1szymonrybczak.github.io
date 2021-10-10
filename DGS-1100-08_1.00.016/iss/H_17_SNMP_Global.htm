@@ -1,0 +1,66 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'SNMP_Global.js');
+function Apply(){
+with(snmp){
+if(Snmp[0].checked){
+item.value='';
+for(i=0;i<5;i++){
+item.value+=(eval('setting.C'+(i+1)).checked)?'1':'0';
+}
+}
+}
+submitForm(snmp,"snmp_global.cgi");
+}
+function chkSNMPEnable(){
+with(setting){
+var flag=snmp.Snmp[1].checked;
+snmp.Trap[0].disabled=snmp.Trap[1].disabled=flag;
+if(flag)
+C1.disabled=C2.disabled=C3.disabled=C4.disabled=C5.disabled=flag;
+else
+chkTrapEnable();
+}
+}
+function chkTrapEnable(){
+with(setting){
+var flag=snmp.Trap[1].checked;
+C1.disabled=C2.disabled=C3.disabled=C4.disabled=C5.disabled=flag;
+}
+}
+</script>
+</head>
+<body>
+<form name=snmp>
+<script>
+genHdWksp(Tree0221,296);
+showFieldset("diFS",Tree0221,40,236);
+showFieldset("diFS1",SNMP0102,94,182);
+showTable('tabContent','tabContent');
+showTRTD(SNMP0101,'200');
+showTD(strRadioEnable('Snmp',ds_Snmp[0],'chkSNMPEnable();'),'40%','','',2);
+showNulLn(26);
+showTRTD(SNMP0103);
+showTD(strRadioEnable('Trap',ds_Snmp[1],'chkTrapEnable();'),'','','',2);
+showTD('','*');
+hideInput('item','');
+docW("</form><form name=setting>");
+showTRTD(strChkBox('C1',1,ds_Snmp[2],'',SNMP0104));
+showTRTD(strChkBox('C2',1,ds_Snmp[3],'',SNMP0105));
+showTRTD(strChkBox('C3',1,ds_Snmp[4],'',SNMP0106));
+showTRTD(strChkBox('C4',1,ds_Snmp[5],'',SNMP0107));
+showTRTD(strChkBox('C5',1,ds_Snmp[6],'',SNMP0108));
+showTD(strButton('',BT0104,'btnText',"Apply();"),'*','right','',4);
+docW("</form></table>");
+recRSItem('diFS',20,1);
+recRSItem('diFS1',20,1);
+recRSItem('tabContent',40);
+recRSItem('hr1',40);
+chkTrapEnable();
+chkSNMPEnable();
+resizeWS();
+</script>
+</body>
+</html>

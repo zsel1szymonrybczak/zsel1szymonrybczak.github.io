@@ -1,0 +1,58 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'MgtVLAN.js');
+var dfMS;
+function chkEnable(){
+with(dfMS){
+disab=mgtEn[1].checked;
+if(ds_QVEnable||disab)mgtVid.disabled=disab;
+else{
+alert(MMgtVLAN0101);
+mgtEn[1].checked=true;
+mgtVid.disabled=1;
+}
+}
+}
+function ShowName(){
+if(ds_QVEnable)getObj('spanA').innerHTML=ds_QVLANList[dfMS.mgtVid.selectedIndex][1];
+}
+function apply(){
+with(dfMS){
+if(mgtEn[0].checked){
+vM=ds_QVLANList[mgtVid.selectedIndex][2];
+if(vM.indexOf('T')==-1&&vM.indexOf('U')==-1)
+return errSelect(mgtVid,MMgtVLAN0102);
+}
+submitForm(dfMS,"mgt_vlan.cgi");
+}
+}
+</script>
+</head>
+<body>
+<form name=formMgtSet>
+<script>
+dfMS=d.formMgtSet;
+genHdWksp(MgtVLAN0100,206);
+showFieldset("diFS",MgtVLAN0101,40,146);
+showTable('tabMVlan','tabContent');
+showTRTD(MgtVLAN0101,'25%');
+showTD(strRadioEnable('mgtEn',ds_MgtEnable,'chkEnable();'));
+showNulLn(5);
+showTRTD(Pub0100);
+showTD(strSelectVLAN('mgtVid',ds_MgtVID,'ShowName();'));
+showTRTD(Pub0126);
+docW("<td id=spanA>");
+showTD(strButton('',BT0104,'btnText','apply();'),'','right','',2);
+showNulLn(5);
+showTRTD(Pub0113+MgtVLAN0110,'','','',9);
+docW("</table></form>");
+ShowName();
+chkEnable();
+recRSItem('diFS',20,1);
+recRSItem('tabMVlan',40);
+resizeWS();
+</script>
+</body>
+</html>

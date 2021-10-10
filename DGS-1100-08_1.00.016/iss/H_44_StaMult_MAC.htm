@@ -1,0 +1,108 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'StaMultMac.js');
+var numMac,rstMac;
+function checkLA(){
+var bmSp='';
+for(var i=0;i<g_PortNum;i++)with(fwd){
+var isSel=i>=port_f.selectedIndex&&i<=port_t.selectedIndex;
+bmSp+=isSel?'1':'0';
+}
+if(!isCoverTrunkingPort(bmSp))return false;
+return true;
+}
+function AddApply(){
+with(fwd){
+macV=macaddr.value.toUpperCase();
+if(ds_QVEnable&&!ds_AsyVlanEn&&!checkIntegerInput(vid,1,4094))return;
+if(macV=='')return errInput(macaddr,MStatic107);
+if(CheckMACformat(macV,1,1,0,1)!='OK')return errInput(macaddr);
+if(!checkLA())return errSelect(port_f,MMulSta100);
+bMached=0;
+if(g_MaxMulSMACNum-numMac==0){
+for(i in ds_SMutMacList){
+if((formMACString(ds_SMutMacList[i][2])==macV)&&
+(!ds_QVEnable||ds_AsyVlanEn||ds_SMutMacList[i][1]==vid.value)){
+bMached=1;
+break;
+}
+}
+if(bMached==0)return alert(MStatic109+numMac+MStatic110);
+}
+submitForm(fwd,"mac_multi_add.cgi");
+}
+}
+function del_check(num){
+with(del_fwd){
+aItem=ds_SMutMacList[num];
+deleteAll.value='0';
+fwdport.value=aItem[0];
+macaddr.value=formMACString(aItem[2]);
+if(ds_QVEnable&&!ds_AsyVlanEn)
+vid.value=isNaN(parseInt(aItem[1],10))?1:aItem[1];
+submitForm(del_fwd,"mac_multi_del.cgi");
+}
+}
+function delete_all(){
+if(confirm(MMulSta200)){
+del_fwd.deleteAll.value='1';
+submitForm(del_fwd,"mac_multi_del.cgi");
+}
+}
+function getData(){
+var aData=new Array();
+for(var i in ds_SMutMacList){
+var aSrc=ds_SMutMacList[i];
+aData[i]=new Array();
+aData[i][0]=i-0+1;
+aData[i][1]=(ds_QVEnable&&!ds_AsyVlanEn)?aSrc[1]:Pub0110;
+aData[i][2]=formMACString(aSrc[2]);
+aData[i][3]=getPtList(aSrc[0],'1',8);
+aData[i][4]=strButton('',BT0110,'btnInGray','del_check('+i+');');
+}
+return aData;
+}
+function resize(){
+var hg=getHeight('tabBigTitle');
+setHeight('diFS',hg-56);
+}
+</script>
+</head>
+<body onresize="resize();">
+<form name=fwd>
+<script>
+numMac=ds_SMutMacList.length;
+genHdWksp(MulStaMAC0100,350);
+showFieldset("diFS",MulStaMAC0100,40);
+showTable('tabAddSMAC','tabContent');
+showTRTD(Pub0108,'14%');
+showTD(Pub0109,'14%');
+if(ds_QVEnable&&!ds_AsyVlanEn)showTD(Pub0100);
+showTD(Pub0127);
+showTRTD(strSelectPort('port_f','chgToPortIndex(this,fwd.port_t);'));
+showTD(strSelectPort('port_t','chkFromPortRight(fwd.port_f,this);',g_PortNum));
+if(ds_QVEnable&&!ds_AsyVlanEn)showTD(strText('vid','flatL',4));
+showTD(strText('macaddr','flatL',17,'',120));
+showTD(strButton('btnApply',BT0104,'btnText','AddApply();'),'*','right');
+showLine('hr1');
+showTRTD(MulStaMAC0101+" (&nbsp;"+Static0104+g_MaxMulSMACNum+"&nbsp;)",
+'','','',(ds_QVEnable&&!ds_AsyVlanEn)?4:3);
+showTD(strButton('',BT0111,'btnText','delete_all();'),'','right');
+docW("</table></form><form name=del_fwd>");
+hideInput('macaddr');
+hideInput('fwdport');
+if(ds_QVEnable&&!ds_AsyVlanEn)hideInput('vid');
+hideInput('deleteAll','0');
+hdItem=[[Pub0101,'8%'],[Pub0100,'8%'],[Pub0127,'25%'],[Pub0102,'*'],[BT0110,'100']];
+genList("SMAC",hdItem,156,42,1,50,1);
+genListCont("SMAC",getData());
+docW("</form>");
+recRSItem('diFS',20,1);
+recRSItem('tabAddSMAC',40);
+recRSItem('hr1',40);
+resizeWS();
+</script>
+</body>
+</html>

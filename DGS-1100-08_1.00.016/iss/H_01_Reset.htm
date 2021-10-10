@@ -1,0 +1,21 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+</head>
+<body>
+<form name=formReset>
+<script>
+genHdWksp(Reset0100,166);
+showFieldset("diFS",Reset0100,40,110);
+showTable('tabContent','tabContent');
+showTRTD(strRadio('reset',0,1,'',MReset0100),'','','',2);
+showTRTD(strRadio('reset',1,0,'',MReset0101),'','','',2);
+showTRTD(strRadio('reset',2,0,'',MReset0102));
+showTD(strButton('',BT0104,'btnTextLong',
+'if(confirm(MReboot105))submitForm(formReset,"reset.cgi");'),'','right');
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script></table></form>
+</body>
+</html>

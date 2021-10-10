@@ -1,0 +1,60 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'StaticMac.js');
+var numMac;
+function applyForm(){
+with(fwd_s){
+if(state.value==0)
+{
+if(numMac==0){
+for(i=0;i<g_PortNum;i++){
+if(i<D1.selectedIndex||i>D2.selectedIndex){
+if(ds_DisLearn[1].charAt(i)=='1'&&ds_PSList[i][1]!=0)
+break;
+}
+}
+if(i==g_PortNum)return alert(MStatic100);
+}
+for(i=D1.selectedIndex+1;i<=D2.selectedIndex+1;i++)
+if(isTrunkingPort(i))return alert(MStatic101);
+}
+submitForm(fwd_s,"autoLearning.cgi");
+}
+}
+function getData(){
+var aData=new Array();
+for(var i=0;i<g_PortNum;i++){
+aData[i]=new Array();
+aData[i][0]=FormPt(i-0+1);
+aData[i][1]=PArr002[ds_DisLearn[1].charAt(i)];
+}
+return aData;
+}
+</script>
+</head>
+<body>
+<form name=fwd_s>
+<script>
+numMac=ds_SMacList.length;
+genHdWksp(Tree0312,180);
+showFieldset("diFS",Static0107,40,266);
+showTable('tabLearn','tabContent');
+showTRTD(Pub0108,'100');
+showTD(Pub0109,'100');
+showTD(Pub0114,'100');
+showTRTD(strSelectPort('D1','chgToPortIndex(this, fwd_s.D2);'));
+showTD(strSelectPort('D2','chkFromPortRight(fwd_s.D1, this);',g_PortNum));
+showTD(strSelectOption('state',PArr002,0,1));
+docW("<td align=right>");showButton('apply',BT0104,'btnText','applyForm();');
+docW("</table></form>");
+hdItem=[[Pub0102,'40%'],[Pub0114,'*']];
+genList("FDBSet",hdItem,120,42,1,30,1);
+genListCont("FDBSet",getData());
+recRSItem('diFS',20,1);
+recRSItem('tabLearn',40);
+resizeWS();
+</script>
+</body>
+</html>

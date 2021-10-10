@@ -1,0 +1,64 @@
+<html>
+<head>
+<script>document.write(top.Prefix);</script>
+<style>
+<!--
+body{background:rgb(228,234,235);}
+-->
+</style>
+<script>
+jsInclude(0,'KMD.js');
+d.onkeydown=function(){
+return keydown();
+}
+function keydown(){
+evt=arguments.callee.caller.arguments[0]||window.event;
+if(evt.keyCode==13){
+login();
+return false;
+}
+return true;
+}
+function login(){
+d.fmLog.pass.value=CryptoJS.MD5(d.formlog.pass.value);
+submitForm(d.fmLog,"login.cgi");
+}
+function imagePreload(imgs){
+var i,arr=[],elm=d.createElement('div');
+for(i=0;i<imgs.length;i++){
+arr.push('<img src="'+imgs[i]+'" />');
+}
+elm.style.display='none';
+elm.innerHTML=arr.join('');
+d.body.appendChild(elm);
+}
+var pdImg=[];
+pdImg.push(ICD+'banner.jpg');
+pdImg.push(ICD+'blackbar.gif');
+pdImg.push(ICD+'graybar.bmp');
+pdImg.push(ICD+'icon.gif');
+pdImg.push(TRD+'tree.gif');
+pdImg.push(ICD+'spacer.gif');
+</script>
+</head>
+<body onload='d.formlog.pass.focus();imagePreload(pdImg);'onresize='resizeLogin();'>
+<form name=fmLog>
+<script>
+hideInput('pass');
+docW("</form><form name=formlog>");
+genHdLogin(Login0100+top.location.hostname);
+showTable('tabLogCont','tabLogCont');
+showTRTD(Login0101,'','','',2);
+showNulLn(20);
+showTRTD(Login0102,80);
+showTD(strPassword('pass','flatL',20,'','onFocus="this.select();"'));
+showNulLn(38);
+showTRTD('','','right','',2);
+showButton('',BT0116,'btnText','login();');
+showButton('',BT0106,'btnText',"location.reload();");
+resizeLogin();
+</script>
+</table>
+</form>
+</body>
+</html>

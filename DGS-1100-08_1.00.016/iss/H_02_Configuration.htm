@@ -1,0 +1,45 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+function checkFile(sf){
+bOK=(".bin"==sf.value.slice(-4).toLowerCase());
+if(!bOK)errSelect(sf,MBackup100);
+return bOK;
+}
+function warning(){
+if(checkFile(formRestore.file)&&confirm(MBackup102))
+submitForm(formRestore,"restore.cgi");
+}
+</script>
+<style>
+<!--
+input.flatBrowse{font-size:12px;font-family:Arial;}
+-->
+</style>
+</head>
+<body>
+<script>
+genHdWksp(Backup0100,166);
+showFieldset("diFS",Reset0100,40,110);
+showTable('tabContent','tabContent');
+docW("<form name=formBackup>");
+showTRTD(Backup0101,'30%');
+if(g_bAdaptive_Access){
+showTD(strRadio('pswType',1,1,'',Backup0103+g_Sp6)+
+strRadio('pswType',0,0,'',Backup0104));
+}
+showTD(strButton('c1',BT0105,'btnText',
+'if(confirm(MBackup101))submitForm(formBackup,"backup.cgi");'),'','right','',2);
+showNulLn();
+docW("</form><form name=formRestore enctype=multipart/form-data>");
+showTRTD(Backup0102);
+showTD("<input id=c2 class=flatBrowse size=50 type=file name=file>");
+showTD(strButton('c3',BT0124,'btnText',"warning();"),'','right');
+docW("</form></table>");
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+</body>
+</html>

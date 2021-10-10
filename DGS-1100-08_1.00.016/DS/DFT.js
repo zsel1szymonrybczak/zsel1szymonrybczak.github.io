@@ -1,0 +1,12 @@
+var ds_QVEnable=1;
+var ds_PVID=[1,1,1,1,1,1,1,1];
+var ds_QVLANList=[[1, '', 'UUUUUUUU']];
+var ds_TrunkStat=0;
+var ds_TrunkList=['00000000','00000000'];
+var ds_DisLearn=[1,'11111111'];
+var ds_SMacList=[];
+var ds_FindPort=0;
+var ds_DFT = [[1,'00-E0-4F-6B-12-82',1,1]];
+var ds_TotalPage =1;
+var ds_CurrPage =1;
+var ds_AsyVlanEn=0;

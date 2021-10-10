@@ -1,0 +1,37 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'DDP.js');
+var dfB,arrType=[VDDP0100,'30','60','90','120'];
+function chkEnable(){
+with(dfB){RpTime.disabled=DDPEn[1].checked;}
+}
+function onApply(){
+with(dfB){
+submitForm(dfB,"ddp.cgi");
+}
+}
+</script>
+</head>
+<body>
+<form name=formDDP>
+<script>
+dfB=d.formDDP;
+genHdWksp(Tree0240,156);
+showFieldset("diFS",Tree0240,40,100);
+showTable('tabContent','tabContent');
+showTRTD(DDP0100,'30%');
+showTD(strRadioEnable('DDPEn',ds_DDPEn,'chkEnable();'));
+showNulLn(5);
+showTRTD(DDP0110);
+showTD(strSelectOption('RpTime',arrType,ds_RpTime));
+showTD(strButton('',BT0104,'btnText','onApply();'),'','right');
+docW("</table></form>");
+chkEnable();
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+</body>
+</html>

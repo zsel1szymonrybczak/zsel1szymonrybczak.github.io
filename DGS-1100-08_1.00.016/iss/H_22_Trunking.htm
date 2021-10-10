@@ -1,0 +1,317 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'trunking.js');
+var dfC,dfL,dfT;
+function changeid(){
+var iSel=dfT.editunit.selectedIndex;
+for(j=0;j<g_PortNum;j++){
+dfT.selPort[j].checked=(ds_TrunkList[iSel].charAt(j)!='0');
+dfT.selPort[j].disabled=(j>=iSel*4&&j<iSel*4+4)?0:1;
+}
+}
+function checkBandwidth(){
+var vTx=-1,vRx=-1;
+for(var i=0;i<g_PortNum;i++){
+if(dfT.selPort[i].checked){
+var aB=ds_BWList[i];
+if(vTx==-1){
+vTx=aB[0];
+vRx=aB[1];
+}
+else if(aB[0]!=vTx||aB[1]!=vRx)return false;
+}
+}
+return true;
+}
+function checkIGMPRouter(){
+var vSR=-1,vDR=-1;
+for(var i=0;i<g_PortNum;i++){
+if(dfT.selPort[i].checked){
+if(vSR==-1){
+vSR=ds_StaRtP.charAt(i);
+vDR=ds_DynRtP.charAt(i);
+}
+else if(vSR!=ds_StaRtP.charAt(i)||
+vDR!=ds_DynRtP.charAt(i))
+return false;
+}
+}
+return true;
+}
+function checkPortSec(){
+for(var i=0;i<g_PortNum;i++){
+if(dfT.selPort[i].checked){
+if(ds_PSList[i][0]!=0)
+return false;
+}
+}
+return true;
+}
+function checkPortSet(){
+var pS=-1,fC=-1;
+for(var i=0;i<g_PortNum;i++){
+if(dfT.selPort[i].checked){
+var aPS=ds_PortSetting[i];
+if(aPS[1]==2||aPS[1]==4)return 3;
+if(pS==-1){
+pS=aPS[1];
+fC=aPS[2];
+}
+else{
+if(pS!=aPS[1])return 1;
+if(fC!=aPS[2])return 2;
+}
+}
+}
+return 0;
+}
+function checkVlan(vlanSet){
+var flag=1;
+for(var v in vlanSet){
+var Typ=-1;
+for(var i=0;i<g_PortNum;i++){
+if(dfT.selPort[i].checked){
+var ch=vlanSet[v][2].charAt(i);
+if(Typ==-1)Typ=ch;
+else if(Typ!=ch)return 1;
+if(Typ!='0')flag=0;
+}
+}
+}
+if(flag)return 2;
+return 0;
+}
+function check1QVlan(){
+var vPV=-1;
+for(var i=0;i<g_PortNum;i++){
+if(dfT.selPort[i].checked){
+if(vPV==-1)vPV=ds_PVID[i];
+else if(vPV!=ds_PVID[i])return 3;
+}
+}
+return checkVlan(ds_QVLANList);
+}
+function checkPBVlan(){
+return checkVlan(ds_PVLANList);
+}
+function checkQos1p(){
+var vP=-1;
+for(var i=0;i<g_PortNum;i++){
+if(dfT.selPort[i].checked){
+if(vP==-1)vP=ds_defPrio[i];
+else if(vP!=ds_defPrio[i])return false;
+}
+}
+return true;
+}
+function checkPortMirror(LaMbStr){
+if(ds_MirrorEn!=0){
+if(dfT.selPort[ds_MirrTag-1].checked)
+return 1;
+if(!IsNoIntersectionOrContainStr(ds_MirrSrc,LaMbStr))
+return 2;
+}
+return 0;
+}
+function StaticMacEntryToBitMap(){
+var aPT=new Array();
+for(var i=0;i<g_PortNum;i++)aPT[i]='0';
+for(i in ds_SMacList)
+aPT[parseInt(ds_SMacList[i][0],10)-1]='1';
+return aPT.join('');
+}
+function GetTrunkID(chkPort){
+for(var i=0;i<g_TrunkNum;i++)
+if(ds_TrunkList[i].charAt(chkPort-1)!='0')return i-0+1;
+return 0;
+}
+function checkIGMPStatic(LaMbStr){
+for(var i in ds_staticGrp)
+if(!IsNoIntersectionOrContainStr(Int2PortList(ds_staticGrp[i][2],g_PortNum),LaMbStr))
+return 0;
+return 1;
+}
+function checkMultStaticMAC(LaMbStr){
+for(var i in ds_SMutMacList)
+if(!IsNoIntersectionOrContainStr(ds_SMutMacList[i][0],LaMbStr))
+return 0;
+return 1;
+}
+function getTraficDomain(pt){
+for(var k in ds_TrafList){
+if(ds_TrafList[k][0]-1==pt)
+return ds_TrafList[k][1];
+}
+return'0';
+}
+function checkTraficSegmentation(LaMbStr){
+var i,j,trfgCfg='';
+for(i=0;i<g_PortNum;i++)
+if(LaMbStr[i]=='1'){
+if(trfgCfg=='')trfgCfg=getTraficDomain(i);
+else if(trfgCfg!=getTraficDomain(i)){
+alert(MTrunking126);
+return 0;
+}
+}
+for(i in ds_TrafList)
+if(!IsNoIntersectionOrContainStr(ds_TrafList[i][1],LaMbStr)){
+alert(MTrunking130);
+return 0;
+}
+return 1;
+}
+function checkStpPorts(LaMbStr){
+var stpCfg=9;
+if(ds_STPEn)for(var i=0;i<g_PortNum;i++)
+if(LaMbStr[i]=='1'){
+if(stpCfg==9)stpCfg=ds_STPPtList[i][0];
+else if(stpCfg!=ds_STPPtList[i][0])
+return 0;
+}
+return 1;
+}
+function apply(){
+with(dfC){
+Group.value=eval(dfT.editunit.value);
+var newval='';
+var selectnum=0;
+sMacPL=StaticMacEntryToBitMap();
+for(var i=0;i<g_PortNum;i++){
+if(!dfT.selPort[i].checked)newval+='0';
+else{
+var id=GetTrunkID(i-0+1);
+if(id!=0&&id!=Group.value)
+return alert(MTrunking121);
+if(ds_LBDEn=='1'&&ds_LBDList[i][0]=='1')
+return alert(MTrunking112);
+if(ds_DisLearn[0]=='1'&&ds_DisLearn[1].charAt(i)=='0')
+return alert(MTrunking125);
+if(sMacPL.charAt(i)=='1')
+return alert(MTrunking114);
+newval+='1';
+selectnum++;
+}
+}
+if(selectnum<2)return alert(MTrunking115);
+if(!checkBandwidth())return alert(MTrunking110);
+if(!checkPortSec())return alert(MTrunking113);
+var rt=checkPortSet();
+if(rt==1)return alert(MTrunking103);
+if(rt==2)return alert(MTrunking124);
+if(rt==3)return alert(MTrunking111);
+if(ds_QVEnable)rt=check1QVlan();
+if(ds_PVEnable)rt=checkPBVlan();
+if(rt==1)return alert(MTrunking105);
+if(rt==2)return alert(MTrunking109);
+if(rt==3)return alert(MTrunking118);
+if(!checkQos1p())return alert(MTrunking119);
+rt=checkPortMirror(newval);
+if(rt==1)return alert(MTrunking122);
+if(rt==2)return alert(MTrunking123);
+if(g_bIgmpPro_Support){
+if(!checkIGMPRouter())return alert(MTrunking127);
+}
+if(!checkIGMPStatic(newval))return alert(MTrunking128);
+if(!checkMultStaticMAC(newval))return alert(MTrunking129);
+if(!checkTraficSegmentation(newval))return;
+if(!checkStpPorts(newval))return alert(MTrunking131);
+GroupMember.value=newval;
+submitForm(dfC,"TrunkingSetting.cgi");
+}
+}
+function applyDelete(num){
+with(dfC){
+Group.value=num;
+submitForm(dfC,"TrunkingDelMems.cgi");
+}
+}
+function chkEnable(){
+with(dfT){
+disab=dfL.enabled_flag[1].checked;
+if(disab||ds_TrunkStat==1){
+editunit.disabled=disab;
+commitpanel.disabled=disab;
+for(i=0;i<g_PortNum;i++)
+selPort[i].disabled=disab;
+}
+if(ds_TrunkStat)
+changeid();
+}
+}
+</script>
+</head>
+<body>
+<form name=formLAconfig>
+<script>
+dfL=d.formLAconfig;
+genHdWksp(Trunking0100,370);
+showFieldset("diFS",Trunking0101,40,60);
+showFieldset("diFS1",Trunking0111,110,126);
+showFieldset("diFS2",Trunking0106,246,106);
+showTable('tabContent','tabContent');
+showTRTD(Trunking0100,'25%');
+showTD(strRadioEnable('enabled_flag',ds_TrunkStat,'chkEnable();'));
+showTD(strButton('',BT0104,'btnText','submitForm(dfL, "TrunkingStatus.cgi");'),'','right');
+docW("</table></form><form name=formTrunking>");
+dfT=d.formTrunking;
+showTable('tabTrunkContent','tabContent',136);
+showTRTD(Pub0101,'5%');
+showTD(strSelectNum('editunit',g_TrunkNum,'','changeid();'));
+showTD(strButton('commitpanel',BT0104,'btnText','apply();'),'','right');
+showLine();
+{
+showDiv();
+showTable('','','',0,0,'100%');
+var nPL=g_PortNum;
+for(iL=0;iL<1;iL++){
+showTR('gh');
+showTD((iL==0?g_Sp1+Pub0102:''),60);
+for(i=1;i<=nPL;i++){
+showTD(g_Sp1+FormPt(iL*nPL+i),'','center');
+}
+showTR('gw');showTD();
+for(i=1;i<=nPL;i++){
+showTD(strChkBox('selPort'),'','center');
+}
+}
+docW("</table></div>");
+}
+showLine('',Pub0113+Trunking0112+g_MaxTkPtNum);
+docW("</table>");
+showTable('tabTrunkLst','tabContent',270);
+{
+showLine();showDiv();
+showTable('','tabRelative');
+showTR('gh');
+showTD('','5%');
+showTD(Pub0101,'15%');
+showTD(Pub0137,'*');
+showTD(BT0110,98,'center');
+for(var i=0;i<g_TrunkNum;i++){
+showTR(i%2?'gw':'gx');
+showTD();
+showTD(Eq2WdInt(i-0+1));
+showTD(getPtList(ds_TrunkList[i],'1',8));
+showTD(strButton('',BT0110,'btnText',"applyDelete("+(i-0+1)+");",(ds_TrunkList[i]-0==0)?'disabled':''),'','center');
+}
+docW("</td></table></div>");
+}
+docW("</table></form><form name=formChannel>");
+dfC=d.formChannel;
+hideInput("Group");
+hideInput("GroupMember");
+docW("</form>");
+chkEnable();
+recRSItem('diFS',20,1);
+recRSItem('diFS1',20,1);
+recRSItem('diFS2',20,1);
+recRSItem('tabContent',40);
+recRSItem('tabTrunkContent',40);
+recRSItem('tabTrunkLst',40);
+resizeWS();
+</script>
+</body>
+</html>

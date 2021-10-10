@@ -1,0 +1,42 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'stormctrl.js');
+var dfB,arrType=[VStorm102,VStorm103,VStorm104];
+function chkEnable(){
+with(dfB){StmType.disabled=Rate.disabled=StormEn[1].checked;}
+}
+function onApply(){
+with(dfB){
+if(StormEn[0].checked&&!checkIntegerInput(Rate,g_MinSTRate,g_MaxSTRate))
+return;
+submitForm(dfB,"bc_storm_ctrl.cgi");
+}
+}
+</script>
+</head>
+<body>
+<form name=formBroadcast>
+<script>
+dfB=d.formBroadcast;
+genHdWksp(Storm0100,190);
+showFieldset("diFS",Storm0100,40,130);
+showTable('tabContent','tabContent');
+showTRTD(Storm0105,'30%');
+showTD(strRadioEnable('StormEn',ds_StormCEn,'chkEnable();'));
+showNulLn(5);
+showTRTD(Storm0101);
+showTD(strSelectOption('StmType',arrType,ds_StormCTp));
+showNulLn(5);
+showTRTD(Storm0110+g_Sp1+g_Lbkt+g_MinSTRate+g_WavL+g_MaxSTRate+g_Rbkt);
+showTD(strText('Rate','flat',7,ds_SCThreshold)+g_Sp1+Storm0111);
+showTD(strButton('',BT0104,'btnText','onApply();'),'','right');
+docW("</table></form>");
+chkEnable();
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+resizeWS();
+</script>
+</body>
+</html>

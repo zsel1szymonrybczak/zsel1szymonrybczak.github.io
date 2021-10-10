@@ -1,0 +1,291 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'QVLAN.js');
+var dAV,dSP;
+function PvidSetApply(){
+with(dSP){
+for(x=0;x<g_PortNum;x++){
+var vPV=Pvid[x].value;
+if(!checkIntegerInput(Pvid[x],g_MinVID,g_MaxVID))return;
+noFind=1;nomem=1;
+for(i in ds_QVLANList)
+if(ds_QVLANList[i][2].charAt(x)!='0'){
+nomem=0;
+if(ds_QVLANList[i][0]==vPV)
+{noFind=0;break;}
+}
+if(noFind&&!(nomem&&vPV==1))
+return errInput(Pvid[x],MVlan1Q102);
+}
+if(ds_TrunkStat)for(x=0;x<g_TrunkNum;x++){
+t=-1;
+for(i=0;i<g_PortNum;i++){
+if(ds_TrunkList[x].charAt(i)=='1'){
+vPV=parseInt(Pvid[i].value);
+if(t==-1)t=vPV;
+else if(t!=vPV)
+return errInput(Pvid[i],MVlan1Q111);
+}
+}
+}
+submitForm(dSP,"q_vlan_set_pvid.cgi");
+}
+}
+function AddApply(){
+with(dAV){
+vVid=VID.value;
+if(vVid=='')return errInput(VID,MVlan1Q106);
+if(!checkIntegerInput(VID,g_MinVID,g_MaxVID))return;
+for(i in ds_QVLANList)
+if(ds_QVLANList[i][0]==parseInt(vVid))return errInput(VID,MVlan1Q109);
+if(!checkStringInput(VName,MVlan1Q105))return;
+if(ds_TrunkStat)for(var x=0;x<g_TrunkNum;x++){
+flag=preFlag=7;
+for(i=1;i<=g_PortNum;i++){
+if(ds_TrunkList[x].charAt(i-1)=='1'){
+for(j=0;j<3;j++)
+if(eval("C"+i+"["+j+"]").checked)flag=(1<<j);
+if(!(preFlag&flag))return alert(MVlan1Q112);
+preFlag=flag;
+}
+}
+}
+mem.value='';
+for(i=1;i<=g_PortNum;i++){
+var obj=eval("C"+i);
+for(j=0;j<3;j++)
+if(obj[j].checked)mem.value+=obj[j].value;
+}
+submitForm(dAV,"q_vlan_add_edit.cgi");
+}
+}
+function CheckUntag(port){
+var flag=0;
+if(!ds_AsyVlanEn)for(j in ds_QVLANList){
+if(ds_QVLANList[j][2].charAt(port-1)=='U'){
+eval("dAV.C"+port+"[2]").checked=true;
+flag=1;
+}
+}
+return(flag==0);
+}
+function SetTablePos(iTop){
+setWkspHeight(156+iTop);
+setListTop("QVlan",iTop);
+setTop("tabContent",iTop-30);
+resizeWS();
+}
+function AddVID(){
+if(!ds_QVEnable)return alert(MVlan1Q100);
+if(ds_QVLANList.length>=g_MaxVlanNum)return alert(MVlan1Q104);
+hideObj('btnAsyPvid');
+hideObj('btnVLANAdd');
+showObj('tabVLANContent');
+hideObj('tabPvidContent');
+SetTablePos(240);
+}
+function PvidSet(){
+hideObj('btnAsyPvid');
+hideObj('btnVLANAdd');
+showObj('tabPvidContent');
+hideObj('tabVLANContent');
+SetTablePos(150);
+}
+function revertBt(){
+showObj('btnAsyPvid');
+showObj('btnVLANAdd');
+hideObj('tabPvidContent');
+hideObj('tabVLANContent');
+SetTablePos(96);
+}
+function AddCancel(){
+with(dAV){
+VID.value='';
+VName.value='';
+for(j=1;j<=g_PortNum;j++)
+eval("C"+j+"[2]").checked=true;
+revertBt();
+}
+}
+function PvidAddCancel(){
+for(j=0;j<g_PortNum;j++)
+dSP.Pvid[j].value=ds_PVID[j];
+revertBt();
+}
+function SelAll(indexRadio){
+selflag=0;
+for(i=1;i<=g_PortNum;i++){
+eval("dAV.C"+i+"[indexRadio]").checked=true;
+if(indexRadio==0&&!CheckUntag(i))selflag=1;
+}
+if(selflag)alert(MVlan1Q110);
+}
+function RenameStart(iTag){
+with(fList){
+NDspObj(Rename[iTag])
+NDspObj(VLAN_BB[iTag])
+DispObj(VName[iTag])
+DispObj(RenameApply[iTag])
+VName[iTag].select();
+VName[iTag].focus();
+}
+}
+function RenameApplyIt(iTag){
+if(checkStringInput(fList.VName[iTag],MVlan1Q105))with(fProc){
+tag_id.value=ds_QVLANList[iTag][0];
+vname.value=fList.VName[iTag].value;
+submitForm(fProc,"q_vlan_rename.cgi");
+}
+}
+function CannotDel(id){
+var vid=ds_QVLANList[id][0];
+if(id==0||
+(ds_SVEnable&&ds_SV_VID==vid)||
+(ds_VVEnable&&ds_VV_VID==vid)||
+(ds_MgtEnable&&ds_MgtVID==vid))
+return true;
+}
+function chkportinvlan(Tagid){
+for(j in ds_QVLANList){
+if(j!=Tagid){
+for(i=0;i<g_PortNum;i++)
+if(ds_QVLANList[j][2].charAt(i)!='0')return true;
+}
+}
+return false;
+}
+function subtrunkchk(Tagid){
+if(ds_TrunkStat)for(var x=0;x<g_TrunkNum;x++){
+var pt=ds_TrunkList[x].indexOf('1');
+if(pt!=-1&&ds_QVLANList[Tagid][2].charAt(pt)!='0'){
+for(k in ds_QVLANList)
+if(k!=Tagid&&ds_QVLANList[k][2].charAt(pt)!='0')
+return true;
+return false;
+}
+}
+return true;
+}
+function delvid(iTag){
+with(fProc){
+vid=ds_QVLANList[iTag][0];
+if(!chkportinvlan(iTag))return alert(MVlan1Q200);
+if(!subtrunkchk(iTag))return alert(MVlan1Q201);
+tag_id.value=vid;
+submitForm(fProc,"q_vlan_del.cgi");
+}
+}
+function getData(){
+var aData=new Array();
+for(var i in ds_QVLANList){
+var aSrc=ds_QVLANList[i];
+aData[i]=new Array();
+aData[i][0]='<a href="'+HTML01211+'?vlanIndex='+i+'">'+aSrc[0];
+aData[i][1]=strText('VLAN_BB',i%2?'flatGW':'flatGX',10,aSrc[1],'','','readonly')+
+strText('VName','flatWS',10,aSrc[1],'','display:none;');
+aData[i][2]=getPtList(aSrc[2],'U',8);
+aData[i][3]=getPtList(aSrc[2],'T',8);
+aData[i][4]=strButton('Rename',BT0123,'btnInGrayS','RenameStart('+i+');')+
+strButton('RenameApply',BT0104,'btnInGrayS','RenameApplyIt('+i+');','style="display:none;"');
+aData[i][5]=strButton('',BT0110,'btnInGray','delvid('+i+');',CannotDel(i)?'disabled':'');
+}
+return aData;
+}
+function resize(){
+var hg=getHeight('tabBigTitle');
+setHeight('diFS',hg-56);
+}
+</script>
+</head>
+<body onresize="resize();">
+<form name=formVlanMode>
+<script>
+genHdWksp(Vlan1Q0101,308);
+showFieldset("diFS",Vlan1Q0100,40,216);
+showTable('tabContent','tabContent');
+showTRTD("( "+Vlan1Q0102+g_MaxVlanNum+" )",'','','',2);
+showTD(strButton('btnVLANAdd',BT0101,'btnText',"AddVID();")+' '+
+strButton('btnAsyPvid',BT0119,'btnText','PvidSet();','style="width:110;"'),'','right');
+docW("</table></form><form name=formAddVLAN>");
+dAV=d.formAddVLAN;
+showTable('tabVLANContent','tabContent');
+showTRTD(Pub0100,'15%');
+showTD(strText('VID','flatL',4));
+showTRTD(Pub0126);
+showTD(strText('VName','flatL',10)+' '+Vlan1Q0106);
+showLine();
+hideInput('mem');
+showTable('','tabRelative');
+showTR('gh');
+showTD(g_Sp2+Pub0102,100);
+showTD(BT0128,100);
+for(i=1;i<=g_PortNum;i++)
+showTD(g_Sp1+FormPt(i));
+var arrMT=[
+['gw',Vlan1Q0109,'U',''],
+['gx',Vlan1Q0110,'T',''],
+['gw',Vlan1Q0111,'0',1]
+];
+for(j=0;j<3;j++){
+aMT=arrMT[j];
+showTR(aMT[0]);showTD(g_Sp1+aMT[1]);
+showTD(strButton('',BT0103,'btnInGray',"SelAll("+j+");",'style="width:50;"'));
+for(k=1;k<=g_PortNum;k++)
+showTD(strRadio('C'+k,aMT[2],aMT[3],(j==0?'CheckUntag('+k+');':'')));
+}
+showNulLn(5);
+docW("</table>");
+showTRTD(strButton('AddVIDCancel',BT0108,'btnText',"AddCancel();")+
+strButton('AddVIDApply',BT0104,'btnText',"AddApply();"),'','right','',2);
+docW("</table></form><form name=formSetPVID>");
+dSP=d.formSetPVID;
+showTable('tabPvidContent','tabContent');
+showLine();
+showTable('','tabRelative');
+var i,iLine;
+if(g_PortNum<=16)PortLen=g_PortNum;
+for(iLine=1,portStart=1;iLine<=4;iLine++){
+showTR('gh');
+showTD(g_Sp1+Pub0102,120);
+for(i=portStart;(i-portStart)<PortLen&&i<=g_PortNum;i++)
+showTD(g_Sp3+FormPt(i));
+showTR('gw');
+showTD(g_Sp2+Vlan1Q0103);
+for(i=portStart;(i-portStart)<PortLen&&i<=g_PortNum;i++)
+showTD(strText('Pvid','flat',4,ds_PVID[i-1]));
+showNulLn(5);
+portStart+=Math.round(PortLen);
+if(i>=g_PortNum)break;
+}
+docW("</table>");
+showTRTD(strButton('PvidCancel',BT0108,'btnText',"PvidAddCancel();")+
+strButton('PvidApply',BT0104,'btnText',"PvidSetApply();"),'','right');
+docW("</table></form><form name=fProc>");
+hideInput('tag_id');
+hideInput('vname');
+docW("</form><form name=fList>");
+hdItem=[[Pub0100,'5%'],[Pub0126,'*'],[Vlan1Q0112,'26%'],[Vlan1Q0113,'26%'],[Vlan1Q0114,'90'],[Vlan1Q0115,'78']];
+genList("QVlan",hdItem,96,42,1,50,1);
+genListCont("QVlan",getData());
+hideInput('Rename');
+hideInput('VLAN_BB');
+hideInput('VName');
+hideInput('RenameApply');
+docW("</form>");
+hideObj('tabPvidContent');
+hideObj('tabVLANContent');
+if(!ds_QVEnable){
+ShowList("QVlan",0);
+DisableObj('btnAsyPvid');
+}
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+recRSItem('tabPvidContent',40);
+recRSItem('tabVLANContent',40);
+recRSItem('hr1',52);
+resizeWS();
+</script>
+</body>
+</html>

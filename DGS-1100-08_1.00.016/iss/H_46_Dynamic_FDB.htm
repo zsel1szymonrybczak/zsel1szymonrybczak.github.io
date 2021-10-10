@@ -1,0 +1,248 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+var dAF,dCF,lenDF,rstMac,iSec=6;
+function chkTotal(iObj,select){
+dfc=dAF.fwb[select];
+if(!dfc.checked)
+return chgSel(select,false);
+if(isTrunkingPort(parseInt(ds_DFT[select][0],10))){
+alert(MDynamic100);
+dfc.checked=false;
+return;
+}
+k=0;
+for(i=0;i<lenDF;i++)
+if(dAF.fwb[i].checked)k++;
+if(k<=rstMac)
+return chgSel(select,true);
+if(rstMac)alert(ds_SMacList.length+MDynamic104+rstMac+'.');
+else	alert(MDynamic103);
+dfc.checked=false;
+}
+function selectAll(){
+with(dAF){
+if(rstMac==0)return alert(MDynamic103);
+totalNum=rstMac;
+for(x=0;x<lenDF;x++)
+if(fwb[x].checked)totalNum--;
+for(x=0;x<lenDF&&totalNum>0;x++){
+if(!fwb[x].checked&&!isTrunkingPort(ds_DFT[x][0])){
+fwb[x].checked=true;
+chgSel(x,true);
+totalNum--;
+}
+}
+}
+}
+function cleanAll(){
+for(x=0;x<lenDF;x++){
+dAF.fwb[x].checked=false;
+chgSel(x,false);
+}
+}
+function pgcheck(findPage){
+with(dCF){
+if(findPage<1)findPage=1;
+if(findPage>ds_TotalPage)findPage=ds_TotalPage;
+selectpagenum.disabled=1;
+pagenum.value=findPage;
+p.sel=d.find.searchport.selectedIndex;
+submitForm(dCF,"changePage.cgi");
+}
+}
+function add_check(){
+with(dAF){
+for(i=0;i<lenDF;i++)
+if(ME[i].disabled==0)break;
+if(i==lenDF)
+return alert(MDynamic108);
+for(i=0;i<lenDF;i++)
+fwb[i].disabled=1;
+if(p&&Defined(p.leftMenu))
+p.leftMenu.sselItemMark(Tree03111);
+submitForm(dAF,"dmac2smac.cgi");
+}
+}
+function chgSel(n,flag){
+with(dAF){
+ME[n].disabled=!flag;
+for(i=0;i<lenDF;i++)
+if(ME[i].disabled==0)break;
+if(i==lenDF)DisableObj('addbutton');
+else	EnableObj('addbutton');
+}
+}
+function resize(){
+var hg=getHeight('tabBigTitle');
+setTop('tabDeviceInfoApply',hg-52);
+setHeight('diFS',hg-56);
+}
+function chkInit(hasData){
+if(hasData){
+if(ds_CurrPage>=ds_TotalPage)DisableObj('nextbutton');
+else	EnableObj('nextbutton');
+if(ds_CurrPage==1)DisableObj('prebutton');
+else	EnableObj('prebutton');
+if(ds_TotalPage==0)DisableObj('selectpagenum');
+else{
+EnableObj('selectpagenum');
+dCF.selectpagenum.value=ds_CurrPage;
+}
+if(rstMac==0||lenDF==0){
+DisableObj('selbutton');
+DisableObj('clrbutton');
+}
+else{
+EnableObj('selbutton');
+EnableObj('clrbutton');
+}
+if(rstMac==0)
+for(i=0;i<lenDF;i++)dAF.fwb[i].disabled=1;
+EnableObj('searchport');
+d.find.searchport.selectedIndex=ds_FindPort;
+EnableObj('searchbt');
+}
+else{
+DisableObj('searchport');
+DisableObj('searchbt');
+DisableObj('selbutton');
+DisableObj('clrbutton');
+DisableObj('selectpagenum');
+DisableObj('nextbutton');
+DisableObj('prebutton');
+}
+DisableObj('addbutton');
+}
+function COMPRESS_CHAR(x){
+var CompBitmap=[
+'0','1','2','3','4','5','6','7','8','9',
+'A','B','C','D','E','F','G','H','I','J',
+'K','L','M','N','O','P','Q','R','S','T',
+'U','V','W','X','Y','Z','a','b','c','d',
+'e','f','g','h','i','j','k','l','m','n',
+'o','p','q','r','s','t','u','v','w','x',
+'y','z','-','_'
+];
+return(CompBitmap[0x3F&(x-0)]);
+}
+function compMacEntry(port,vid,mac)
+{
+var des=new Array(),
+u32mac,idx,iM;
+if(vid==Pub0110)vid=0;
+des[0]=COMPRESS_CHAR(port);
+des[1]=COMPRESS_CHAR(vid);
+des[2]=COMPRESS_CHAR(vid>>6);
+mac=mac.split('-');
+for(iM=0;iM<2;iM++)
+{
+u32mac=0;
+for(idx=iM*3;idx<3+iM*3;idx++)
+{
+u32mac<<=8;
+u32mac+=parseInt(mac[idx],16);
+}
+for(idx=6+iM*4;idx>2+iM*4;idx--)
+{
+des[idx]=COMPRESS_CHAR(u32mac);
+u32mac>>=6;
+}
+}
+return des.join('');
+}
+function OnTime(){
+if(iSec>0){
+iSec--;
+var str=CableDiag0111+"("+timeFormat(iSec)+")";
+getObj("A1").innerHTML=str
+setTimeout(OnTime,1000);
+}
+}
+function Refresh(){
+iSec=0;
+lenDF=ds_DFT.length;
+rstMac=g_MaxSMACNum-ds_SMacList.length;
+genListCont("DMAC",getData());
+resizeWS();
+for(i=0;i<lenDF;i++)
+d.add_fwd.innerHTML+=strHideInput('ME',compMacEntry(ds_DFT[i][0],ds_DFT[i][2],ds_DFT[i][1]),'disabled');
+d.add_fwd.innerHTML+=strHideInput('ME','','disabled');
+for(i=1;i<=ds_TotalPage;i++){
+dCF.selectpagenum.options[i-1]=new Option(i,i);
+}
+hideObj('tabwait');
+chkInit(1);
+}
+function getData(){
+var arrType=[Pub0134,Pub0135,VDynamic102,VDynamic103];
+var aData=new Array();
+if(typeof(ds_DFT)!='undefined'){
+for(var i in ds_DFT){
+var aSrc=ds_DFT[i];
+aData[i]=new Array();
+aData[i][0]=i-0+1+g_MaxPerPage*(ds_CurrPage-1);
+aData[i][1]=FormCh(aSrc[0]);
+aData[i][2]=aSrc[1];
+aData[i][3]=(ds_QVEnable&&!ds_AsyVlanEn)?aSrc[2]:Pub0110;
+aData[i][4]=arrType[aSrc[3]];
+aData[i][5]=strChkBox('fwb',i,'',"chkTotal(this,"+i+");");
+}
+}
+return aData;
+}
+</script>
+</head>
+<body onload="chkInit(0);"onresize="resize();">
+<form name=find>
+<script>
+if(typeof(p.sel)!='undefined'){
+ds_FindPort=p.sel;
+p.sel=0;
+}
+else
+ds_FindPort=0;
+genHdWksp(Tree0313,400);
+showFieldset("diFS",Tree0313,40,216);
+showTable('tabContent','tabContent');
+showTRTD();
+docW(Pub0102+g_Sp1+strSelectPort('searchport','',ds_FindPort,1));
+showTD(strButton('searchbt',BT0114,'btnText','p.sel=d.find.searchport.selectedIndex;submitForm(find, "dft_sel_port.cgi");'),'','right');
+showNulLn(5);
+showTRTD();
+showTD(strButton('selbutton',BT0128,'btnText','selectAll();')+
+strButton('clrbutton',BT0107,'btnText','cleanAll();'),'','right');
+docW("</table></form><form name = add_fwd>");
+dAF=d.add_fwd;
+hdItem=[[Pub0101,'12%'],[Pub0102,'12%'],[Pub0127,'30%'],[Pub0100,'12%'],[Dynamic0106,'25%'],[Dynamic0107,'*']];
+genList("DMAC",hdItem,126,42,1,80,1);
+genListCont("DMAC",getData());
+hideInput('fwb','','disabled');
+docW("</form><form name = change_page_fwd>");
+dCF=d.change_page_fwd;
+hideInput('portsel',ds_FindPort);
+hideInput('pagenum');
+showTable('tabDeviceInfoApply','tabContent',124);
+showTRTD('','','right');
+docW(Dynamic0108+g_Sp1+
+strSelectNum('selectpagenum',0,0,'pgcheck(this.selectedIndex+1);')+
+g_Sp2);
+showButton('prebutton',BT0117,'btnText','pgcheck(--ds_CurrPage);');
+showButton('nextbutton',BT0115,'btnText','pgcheck(++ds_CurrPage);');
+showButton('addbutton',BT0104,'btnText','add_check();');
+docW("</table></form><form name=waiting>");
+showTable('tabwait','tabContent',126);
+docW("<tr class=gx style='height:80;'>");
+showTD("<font id=A1 size=3>"+CableDiag0111+"("+timeFormat(iSec)+")</font>",'','center','',3);
+docW("</table></form>");
+recRSItem('diFS',20,1);
+recRSItem('tabwait',41);
+recRSItem('tabDeviceInfoApply',40);
+recRSItem('tabContent',40);
+resizeWS();
+setTimeout("getDataJS('DFT.js', Refresh);","300");
+setTimeout(OnTime,1000);
+</script>
+</body>
+</html>

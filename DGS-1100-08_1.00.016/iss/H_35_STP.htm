@@ -1,0 +1,69 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'STP.js');
+function apply(){
+if(ds_LBDEn&&STPEn.btEn[0].checked)
+return alert(MSTPG100);
+submitForm(STPEn,"STPEn.cgi");
+}
+function chkEnable(){
+var disab=STPEn.btEn[1].checked;
+if(disab||ds_STPEn==1){
+STPMode.btMode[0].disabled=disab;
+STPMode.btMode[1].disabled=disab;
+STPMode.btnmode.disabled=disab;
+STPTrap.STPTrap1[0].disabled=disab;
+STPTrap.STPTrap1[1].disabled=disab;
+STPTrap.STPTrap2[0].disabled=disab;
+STPTrap.STPTrap2[1].disabled=disab;
+STPTrap.bttrap.disabled=disab;
+}
+}
+</script>
+<head>
+<body>
+<form name=STPEn>
+<script>
+genHdWksp(STPG0100,430);
+showFieldset("diFS",STPG0101,40,60);
+showFieldset("diFS1",STPG0102,110,60);
+showFieldset("diFS2",STPG0103,180,84);
+showFieldset("diFS3",STPG0106,274,140);
+showTable('tab1','tabContent');
+showTRTD(STPG0101,'30%');
+showTD(strRadioEnable('btEn',ds_STPEn,'chkEnable();'));
+showTD(strButton('',BT0104,'btnText','apply();'),'','right');
+docW("</table></form><form name=STPMode>");
+showTable('tab2','tabContent',134);
+showTRTD(STPG0102,'30%');
+showTD(strRadioEnable('btMode',ds_RSTPMode,'',STPG0121+g_Sp6+g_Sp6+g_Sp2,STPG0120));
+showTD(strButton('btnmode',BT0104,'btnText','submitForm(STPMode, "STPMode.cgi");'),'','right');
+docW("</table></form><form name=STPTrap>");
+showTable('tab3','tabContent',204);
+showTRTD(STPG0104,'30%');
+showTD(strRadioEnable('STPTrap1',ds_STPTrap[0]));
+showTRTD(STPG0105,'30%');
+showTD(strRadioEnable('STPTrap2',ds_STPTrap[1]));
+showTD(strButton('bttrap',BT0104,'btnText','submitForm(STPTrap, "STPTrap.cgi");'),'','right');
+docW("</table></form>");
+showTable('tab4','tabContent',300);
+showTRTD(STPG0107,'30%');showTD(ds_STPInfo[0]);
+showTRTD(STPG0108);showTD(ds_STPInfo[1]);
+showTRTD(STPG0109);showTD(ds_STPInfo[2]);
+showTRTD(STPG0110);showTD(ds_STPInfo[3]);
+showTRTD(STPG0111);showTD(FormGr(ds_STPInfo[4]));
+chkEnable();
+recRSItem('diFS',20,1);
+recRSItem('diFS1',20,1);
+recRSItem('diFS2',20,1);
+recRSItem('diFS3',20,1);
+recRSItem('tab1',40);
+recRSItem('tab2',40);
+recRSItem('tab3',40);
+recRSItem('tab4',40);
+resizeWS();
+</script>
+<body>
+</html>

@@ -1,0 +1,44 @@
+<html>
+<head>
+<script>document.write(parent.Prefix);</script>
+<script>
+jsInclude(1,'Statistics.js');
+function getData(){
+var aData=new Array();
+for(var i=0;i<g_PortNum;i++){
+var aSrc=ds_Statistics[i];
+aData[i]=new Array();
+aData[i][0]=FormPt(i-0+1);
+aData[i][1]=aSrc[0];
+aData[i][2]=aSrc[2];
+aData[i][3]=aSrc[1];
+aData[i][4]=aSrc[3];
+}
+return aData;
+}
+function Refresh(){
+genListCont("ListS",getData());
+resizeWS();
+EnableObj('btRefresh');
+}
+</script>
+</head>
+<body>
+<form name=portstatistics>
+<script>
+genHdWksp(Statistics0100,296);
+showFieldset("diFS",Statistics0100,40,240);
+showTable('tabContent','tabContent');
+showTRTD('','','right');
+docW(strButton('btRefresh',BT0121,'btnText','this.disabled=1;getDataJS("Statistics.js", Refresh);')+g_Sp1);
+showButton('',BT0107,'btnText','submitForm(portstatistics, "statistics.cgi");');
+hideInput('Clear',BT0107);
+docW("</td></tr></table></form>");
+hdItem=[[Pub0102,'12%'],[Statistics0120,'22%'],[Statistics0122,'22%'],[Statistics0121,'22%'],[Statistics0123,'*']];
+genList("ListS",hdItem,96,42,1,30,1);
+recRSItem('diFS',20,1);
+recRSItem('tabContent',40);
+Refresh();
+</script>
+</body>
+</html>
